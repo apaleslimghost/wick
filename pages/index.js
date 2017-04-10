@@ -1,16 +1,19 @@
 import {pages} from '../db';
 import Link from 'next/link';
 import Header from '../components/header';
+import styled from 'styled-components';
+
+const PageList = styled.ul``;
 
 const HomePage = ({pages = []}) => <div>
 	<Header />
-	<ul>
+	<PageList>
 		{pages.map(page => <li key={page._id}>
 			<Link href={{pathname: 'page', query: {slug: page.slug}}} as={page.slug}>
 				<a>{page.title}</a>
 			</Link>
 		</li>)}
-	</ul>
+	</PageList>
 </div>;
 
 HomePage.getInitialProps = async () => {

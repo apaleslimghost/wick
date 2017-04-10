@@ -8,6 +8,11 @@ import Router from 'next/router';
 import getPage from '../get-page';
 import SimpleMDE from 'react-simplemde-editor';
 import Header from '../components/header';
+import styled from 'styled-components';
+
+const Input = styled.input`
+font: inherit;
+`;
 
 export default class EditPage extends Component {
   constructor(props, ...args) {
@@ -55,10 +60,10 @@ export default class EditPage extends Component {
         <Link preload href={{pathname: '/page', query: {slug: this.props.slug}}} as={this.props.slug}><a>Back</a></Link>
       </Header>
       <h1>
-        <input name='title' defaultValue={this.props.page.title || fallbackTitle} placeholder='Title' />
+        <Input name='title' defaultValue={this.props.page.title || fallbackTitle} placeholder='Title' />
       </h1>
       <h2>
-        <input name='slug' defaultValue={this.props.slug} placeholder='title' />
+        <Input name='slug' defaultValue={this.props.slug} placeholder='title' />
       </h2>
       <SimpleMDE value={this.state.content} onChange={content => this.setState({content})} />
       <input type='submit' />

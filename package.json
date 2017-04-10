@@ -21,6 +21,7 @@
     "react-dom": "^15.5.3",
     "react-markdown": "^2.4.6",
     "react-simplemde-editor": "^3.6.10",
+    "styled-components": "^1.4.4",
     "title-case": "^2.1.1"
   },
   "engines": {
