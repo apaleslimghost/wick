@@ -20,12 +20,12 @@ const redirectToUnderscores = (req, res, next) => {
 app.prepare().then(() => {
   const server = express();
 
-  server.use('/_api', expressPouch(PouchDB, {mode: 'minimumForPouchDB'}));
+  server.use('/_api', expressPouch(PouchDB, {logPath: '.data/log.txt'}));
 
   server.get('/', (req, res) => res.send('<a href="/_edit/foo">hello</a>'));
 
   server.get('/_edit*', redirectToUnderscores, (req, res) => app.render(req, res, '/edit', {slug: req.params[0]}));
-  server.get('/*', redirectToUnderscores, (req, res) => app.render(req, res, '/page', {slug: req.params[0]}));
+  server.get('/*', redirectToUnderscores, (req, res) => app.render(req, res, '/page', {slug: '/' + req.params[0]}));
 
   server.listen(3000, () => console.log('Listening on 3000'));
 });
