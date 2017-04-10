@@ -22,7 +22,7 @@ app.prepare().then(() => {
 
   server.use('/_api', expressPouch(PouchDB, {logPath: '.data/log.txt'}));
 
-  server.get('/', (req, res) => res.send('<a href="/_edit/foo">hello</a>'));
+  server.get('/', (req, res) => app.render(req, res, '/'));
 
   server.get('/_edit*', redirectToUnderscores, (req, res) => app.render(req, res, '/edit', {slug: req.params[0]}));
   server.get('/*', redirectToUnderscores, (req, res) => app.render(req, res, '/page', {slug: '/' + req.params[0]}));

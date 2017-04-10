@@ -1,4 +1,5 @@
 import {Component} from 'react';
+import Link from 'next/link';
 import {pages} from '../db';
 import titleCase from 'title-case';
 import formJson from '@quarterto/form-json';
@@ -29,6 +30,8 @@ export default class EditPage extends Component {
     const fallbackTitle = titleCase(lastSlugPart.replace(/_/g, ' '));
 
     return <form onSubmit={ev => this.submit(ev)}>
+      <Link href='/'><a>Home</a></Link>
+      <Link preload href={{pathname: '/page', query: {slug: this.props.slug}}} as={this.props.slug}><a>Back</a></Link>
       <h1><input name='title' defaultValue={this.props.page.title || fallbackTitle} placeholder='Title' /></h1>
       <h2><input name='slug' defaultValue={this.props.slug} placeholder='title' /></h2>
       <textarea name='content' defaultValue={this.props.page.content} />
