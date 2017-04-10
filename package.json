@@ -1,0 +1,35 @@
+{
+  "//1": "describes your app and its dependencies",
+  "//2": "https://docs.npmjs.com/files/package.json",
+  "//3": "updating this file will download and update your packages",
+  "name": "my-glitch-app",
+  "version": "0.0.1",
+  "description": "What am I about?",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "next": "^2.1.1",
+    "react": "^15.5.3",
+    "react-dom": "^15.5.3",
+    "express": "^4.15.2",
+    "express-pouchdb": "^2.3.5",
+    "pouchdb": "^6.1.2",
+    "pouchdb-find": "^0.10.5",
+    "title-case": "^2.1.1",
+    "@quarterto/form-json": "^1.0.0"
+  },
+  "engines": {
+    "node": "6.9.x"
+  },
+  "repository": {
+    "url": "https://glitch.com/#!/project/welcome-project"
+  },
+  "license": "MIT",
+  "keywords": [
+    "node",
+    "glitch",
+    "express"
+  ]
+}
