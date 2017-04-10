@@ -14,11 +14,13 @@
     "express": "^4.15.2",
     "express-pouchdb": "^2.3.5",
     "next": "^2.1.1",
+    "nprogress": "^0.2.0",
     "pouchdb": "^6.1.2",
     "pouchdb-find": "^0.10.5",
     "react": "^15.5.3",
     "react-dom": "^15.5.3",
     "react-markdown": "^2.4.6",
+    "react-simplemde-editor": "^3.6.10",
     "title-case": "^2.1.1"
   },
   "engines": {

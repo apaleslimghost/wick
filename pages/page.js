@@ -2,6 +2,7 @@ import getPage from '../get-page';
 import Link from 'next/link';
 import Router from 'next/router';
 import Markdown from 'react-markdown';
+import Header from '../components/header';
 
 const MarkdownLink =({href, title, children}) => href[0] === '/' ?
 <Link href={{pathname: '/page', query: {slug: href}}} as={href}>
@@ -9,8 +10,10 @@ const MarkdownLink =({href, title, children}) => href[0] === '/' ?
 </Link> : <a href={href} title={title}>{children}</a>;
 
 const Page = ({page = {}, slug}) => <article>
-	<Link href='/'><a>Home</a></Link>
-	<Link preload href={{pathname: '/edit', query: {slug}}} as={`/_edit${slug}`}><a>Edit</a></Link>
+	<Header>
+		<Link href='/'><a>Home</a></Link>
+		<Link preload href={{pathname: '/edit', query: {slug}}} as={`/_edit${slug}`}><a>Edit</a></Link>
+	</Header>
 	<h1>{page.title}</h1>
 	<Markdown source={page.content} renderers={{Link: MarkdownLink}} />
 </article>;
