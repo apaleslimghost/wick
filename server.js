@@ -20,7 +20,7 @@ const redirectToUnderscores = (req, res, next) => {
 app.prepare().then(() => {
   const server = express();
 
-  server.use('/_api', expressPouch(PouchDB));
+  server.use('/_api', expressPouch(PouchDB, {mode: 'minimumForPouchDB'}));
 
   server.get('/', (req, res) => res.send('<a href="/_edit/foo">hello</a>'));
 

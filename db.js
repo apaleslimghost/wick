@@ -1,7 +1,7 @@
-const PouchDB = require('pouchdb');
+const PouchDB = require('pouchdb').defaults({prefix: '.data/'});
 const pouchDBFind = require('pouchdb-find');
 
-PouchDB.plugin(pouchDBFind).defaults({prefix: '.data/'});
+PouchDB.plugin(pouchDBFind);
 
 const db = name => new PouchDB(
   process.browser ? `${location.protocol}//${location.host}/_api/${name}` : name
