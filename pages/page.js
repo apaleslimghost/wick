@@ -18,6 +18,8 @@ const Page = ({page = {}, slug}) => <Content>
 		<Link preload href={{pathname: '/edit', query: {slug}}} as={`/_edit${slug}`}><a>Edit</a></Link>
 	</Header>
 	<h1>{page.title}</h1>
+	{page.created && <time dateTime={new Date(page.created).toISOString()}>Created: {new Date(page.created).toLocaleString()}</time>}
+	{page.lastUpdated && <time dateTime={new Date(page.lastUpdated).toISOString()}>Last updated: {new Date(page.lastUpdated).toLocaleString()}</time>}
 	<Markdown source={page.content} renderers={{Link: MarkdownLink}} />
 </Content>;
 

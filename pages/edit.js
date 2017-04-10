@@ -28,11 +28,13 @@ export default class EditPage extends Component {
 
   async submit(ev) {
     ev.preventDefault();
+    const form = formJson(ev.target)
+    const slug = (form.slug || this.props.slug).replace(/ /g, '_');
     const page = Object.assign(
       this.props.page,
-      formJson(ev.target),
+      form,
       this.state,
-      {lastUpdated: new Date()}
+      {lastUpdated: new Date(), slug}
     );
 
     if(this.props.found) {
@@ -43,7 +45,6 @@ export default class EditPage extends Component {
       }));
     }
 
-    const slug = page.slug || this.props.slug;
     Router.push({pathname: '/page', query: {slug}}, slug);
   }
 
