@@ -5,10 +5,7 @@ import paramCase from 'param-case';
 
 const header = level => styled(`h${level}`)`
 margin: 0;
-${(level < 3 ? serifScale : sansScale)(7 - level)}
-${level < 3 && css`
-font-weight: 900;
-`}
+${serifScale(7 - level)}
 
 padding-left: 1rem;
 margin-left: -1rem;
