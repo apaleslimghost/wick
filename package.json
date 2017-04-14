@@ -17,6 +17,7 @@
     "lodash.range": "^3.2.0",
     "next": "^2.1.1",
     "nprogress": "^0.2.0",
+    "param-case": "^2.1.1",
     "polished": "^1.0.2",
     "pouchdb": "^6.1.2",
     "pouchdb-find": "^0.10.5",

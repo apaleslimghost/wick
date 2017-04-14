@@ -28,7 +28,7 @@ padding: 0 0.75rem 0.5em;
 `;
 
 const List = ({type, children}) => {
-	const StyledList = styled(type === 'ordered' ? 'ol' : 'ul')`
+	const StyledList = styled(type === 'Ordered' ? 'ol' : 'ul')`
 	${sansScale(0)}
 	padding: 0;
 	margin-left: 1rem;
