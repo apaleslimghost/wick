@@ -1,5 +1,5 @@
 import getPage from '../get-page';
-import Link from 'next/link';
+import Link from '../components/link';
 import Router from 'next/router';
 import Markdown from 'react-markdown';
 import Header from '../components/header';
@@ -14,8 +14,8 @@ const MarkdownLink =({href, title, children}) => href[0] === '/' ?
 
 const Page = ({page = {}, slug}) => <Content>
 	<Header>
-		<Link href='/'><a>Home</a></Link>
-		<Link preload href={{pathname: '/edit', query: {slug}}} as={`/_edit${slug}`}><a>Edit</a></Link>
+		<Link href='/'>Home</Link>
+		<Link prefetch href={{pathname: '/edit', query: {slug}}} as={`/_edit${slug}`}>Edit</Link>
 	</Header>
 	<h1>{page.title}</h1>
 	{page.created && <time dateTime={new Date(page.created).toISOString()}>Created: {new Date(page.created).toLocaleString()}</time>}

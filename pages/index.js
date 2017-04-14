@@ -1,5 +1,5 @@
 import {pages} from '../db';
-import Link from 'next/link';
+import Link from '../components/link';
 import Header from '../components/header';
 import styled from 'styled-components';
 
@@ -10,7 +10,7 @@ const HomePage = ({pages = []}) => <div>
 	<PageList>
 		{pages.map(page => <li key={page._id}>
 			<Link href={{pathname: 'page', query: {slug: page.slug}}} as={page.slug}>
-				<a>{page.title}</a>
+				{page.title}
 			</Link>
 		</li>)}
 	</PageList>
