@@ -10,8 +10,11 @@ import {grey} from '@quarterto/colours';
 
 const Content = styled.article`
 ${sansScale(0)}
-margin-left: 2rem;
-margin-right: 2rem;
+padding-left: 2rem;
+padding-right: 2rem;
+margin-left: auto;
+margin-right: auto;
+max-width: 60rem;
 `;
 
 const MarkdownLink = ({href, title, children}) => href[0] === '/' ?
