@@ -15,8 +15,8 @@ margin-right: 2rem;
 `;
 
 const MarkdownLink = ({href, title, children}) => href[0] === '/' ?
-<Link href={{pathname: '/page', query: {slug: href}}} as={href}>
-	<a title={title}>{children}</a>
+<Link href={{pathname: '/page', query: {slug: href}}} as={href} title={title}>
+	{children}
 </Link> : <a href={href} title={title}>{children}</a>;
 
 const Paragraph = styled.p`${sansScale(0)}`;

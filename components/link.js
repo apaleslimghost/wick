@@ -30,9 +30,9 @@ export default class FancyLink extends Component {
 	}
 
 	render() {
-		const {children, ...props} = this.props;
+		const {children, title, ...props} = this.props;
 		return <Link {...props} ref={link => this.link = link}>
-			<Anchor href={this.state.as || this.state.href}>{children}</Anchor>
+			<Anchor href={this.state.as || this.state.href} title={title}>{children}</Anchor>
 		</Link>;
 	}
 };
