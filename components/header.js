@@ -15,6 +15,7 @@ const headerBackground = {
 const HeaderBar = styled.header`
 background: ${({theme = {}}) => theme.background};
 border-bottom: 1px ${grey[5]} solid;
+margin-bottom: 1rem;
 `;
 
 const Nav = styled.nav`

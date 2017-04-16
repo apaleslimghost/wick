@@ -22,7 +22,7 @@ const props = font => scale => {
 }
 
 const square = x => x * x;
-const divideScale = x => x / 6;
+const divideScale = x => x / 4;
 const plusOne = x => x + 1;
 const compose = (...fns) => x => fns.reduce((y, fn) => fn(y), x);
 
