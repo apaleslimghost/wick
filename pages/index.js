@@ -1,12 +1,14 @@
 import {pages} from '../db';
 import Link from '../components/link';
 import Header from '../components/header';
+import MenuLink from '../components/menu-link';
 import styled from 'styled-components';
 
 const PageList = styled.ul``;
 
 const HomePage = ({pages = []}) => <div>
 	<Header />
+
 	<PageList>
 		{pages.map(page => <li key={page._id}>
 			<Link href={{pathname: 'page', query: {slug: page.slug}}} as={page.slug}>

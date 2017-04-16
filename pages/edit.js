@@ -1,5 +1,5 @@
 import {Component} from 'react';
-import Link from '../components/link';
+import MenuLink from '../components/menu-link';
 import Head from 'next/head';
 import {pages} from '../db';
 import titleCase from 'title-case';
@@ -57,8 +57,7 @@ export default class EditPage extends Component {
         <link href='/static/simplemde.min.css' rel='stylesheet' />
       </Head>
       <Header>
-        <Link href='/'>Home</Link>
-        <Link preload href={{pathname: '/page', query: {slug: this.props.slug}}} as={this.props.slug}>Back</Link>
+        <MenuLink preload href={{pathname: '/page', query: {slug: this.props.slug}}} as={this.props.slug}>Back</MenuLink>
       </Header>
       <h1>
         <Input name='title' defaultValue={this.props.page.title || fallbackTitle} placeholder='Title' />

@@ -25,12 +25,12 @@ position: absolute;
 transition: opacity 0.2s;
 `;
 
-export default ({level, children, ...props}) => {
+export default ({level, children, anchor = true, ...props}) => {
 	const H = header(level);
 	const id = paramCase([].concat(children)[0]);
 
-	return <H {...props} id={id}>
-		<AnchorLink href={`#${id}`}>🔗</AnchorLink>
+	return <H {...props} id={anchor ? id : null}>
+		{anchor && <AnchorLink href={`#${id}`}>🔗</AnchorLink>}
 		{children}
 	</H>;
 };

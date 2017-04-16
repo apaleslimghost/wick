@@ -1,6 +1,6 @@
 import {Children, Component} from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
+import MenuLink from '../components/menu-link';
 import NProgress from 'nprogress';
 import Router from 'next/router';
 import styled, {ThemeProvider} from 'styled-components';
@@ -19,7 +19,6 @@ margin-bottom: 1rem;
 `;
 
 const Nav = styled.nav`
-${sansScale(0)}
 ${maxWidth}
 `;
 
@@ -43,6 +42,7 @@ export default class Header extends Component {
         </Head>
 
         <Nav>
+          <MenuLink href='/' primary>Wick</MenuLink>
           {this.props.children}
         </Nav>
       </HeaderBar>

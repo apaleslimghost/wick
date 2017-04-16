@@ -1,5 +1,6 @@
 import getPage from '../get-page';
 import Link from '../components/link';
+import MenuLink from '../components/menu-link';
 import Router from 'next/router';
 import Markdown from 'react-markdown';
 import Header from '../components/header';
@@ -42,8 +43,7 @@ ${maxWidth}
 
 const PagePage = ({page = {}, slug}) => <Page>
 	<Header>
-		<Link href='/'>Home</Link>
-		<Link prefetch href={{pathname: '/edit', query: {slug}}} as={`/_edit${slug}`}>Edit</Link>
+		<MenuLink prefetch href={{pathname: '/edit', query: {slug}}} as={`/_edit${slug}`}>Edit</MenuLink>
 	</Header>
 	<Content>
 		<Heading level={1}>{page.title}</Heading>

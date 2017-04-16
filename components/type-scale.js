@@ -21,11 +21,13 @@ const props = font => scale => {
 	`;
 }
 
-const square = x => x * x;
-const divideScale = x => x / 4;
+const cube = x => x * x * x;
+const divideScale = x => x / 5;
 const plusOne = x => x + 1;
 const compose = (...fns) => x => fns.reduce((y, fn) => fn(y), x);
 
-export const scale = font => compose(divideScale, square, plusOne, props(font));
+const scaled = compose(divideScale, cube, plusOne);
+
+export const scale = font => compose(scaled, props(font));
 export const sansScale = scale('Merriweather Sans');
 export const serifScale = scale('Merriweather');
