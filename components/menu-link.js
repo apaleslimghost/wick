@@ -5,7 +5,7 @@ import {teal, grey} from '@quarterto/colours';
 import textRule, {ruleColor} from './text-rule';
 import {sansScale} from './type-scale';
 import {transparentize} from 'polished';
-import Heading from './heading';
+import {Heading} from './typography';
 
 const Anchor = styled.a`
 padding: 0 1rem;
