@@ -35,6 +35,11 @@ margin-bottom: 1rem;
 const Editor = styled(SimpleMDE)`
 ${sansScale(0)}
 
+.CodeMirror {
+  height: calc(100vh - 20rem);
+  overflow-y: auto;
+}
+
 .cm-formatting {
   opacity: 0.3;
 }
@@ -48,6 +53,13 @@ ${sansScale(0)}
   }`)}
 }
 `;
+
+const editorToolbar = [
+  'bold', 'italic', 'strikethrough', '|',
+  'heading', 'heading-smaller', 'heading-bigger', '|',
+  'quote', 'unordered-list', 'ordered-list', '|',
+  'link', 'image', 'horizontal-rule',
+];
 
 export default class EditPage extends Component {
   constructor(props, ...args) {
@@ -107,7 +119,11 @@ export default class EditPage extends Component {
         </Heading>
 
         <Input name='slug' defaultValue={this.props.slug} placeholder='title' />
-        <Editor value={this.state.content.trim()} onChange={content => this.setState({content})} />
+        <Editor
+          value={this.state.content.trim()}
+          onChange={content => this.setState({content})}
+          options={{toolbar: editorToolbar}}
+        />
       </Form>
     </main>;
   }
