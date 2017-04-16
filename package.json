@@ -12,6 +12,7 @@
   "dependencies": {
     "@quarterto/colours": "^1.0.0",
     "@quarterto/form-json": "^1.0.0",
+    "contrast": "^1.0.1",
     "express": "^4.15.2",
     "express-pouchdb": "^2.3.5",
     "lodash.range": "^3.2.0",

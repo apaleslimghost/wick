@@ -20,6 +20,12 @@ margin-bottom: 1rem;
 
 const Nav = styled.nav`
 ${maxWidth}
+display: flex;
+`;
+
+const Spacer = styled.div`
+flex: 1;
+order: 1;
 `;
 
 Router.onRouteChangeStart = (url) => {
@@ -42,8 +48,9 @@ export default class Header extends Component {
         </Head>
 
         <Nav>
-          <MenuLink href='/' primary>Wick</MenuLink>
+          <MenuLink href='/' logo>Wick</MenuLink>
           {this.props.children}
+        <Spacer />
         </Nav>
       </HeaderBar>
     </ThemeProvider>;

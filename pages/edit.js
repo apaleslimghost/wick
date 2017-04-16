@@ -1,5 +1,5 @@
 import {Component} from 'react';
-import MenuLink from '../components/menu-link';
+import MenuLink, {MenuItem} from '../components/menu-link';
 import Head from 'next/head';
 import {pages} from '../db';
 import titleCase from 'title-case';
@@ -9,6 +9,13 @@ import getPage from '../get-page';
 import SimpleMDE from 'react-simplemde-editor';
 import Header from '../components/header';
 import styled from 'styled-components';
+import {maxWidth} from '../components/grid';
+
+import {Heading} from '../components/typography';
+
+const Form = styled.form`
+${maxWidth}
+`;
 
 const Input = styled.input`
 font: inherit;
@@ -28,7 +35,9 @@ export default class EditPage extends Component {
 
   async submit(ev) {
     ev.preventDefault();
-    const form = formJson(ev.target)
+    if(!this.form) return;
+
+    const form = formJson(this.form);
     const slug = (form.slug || this.props.slug).replace(/ /g, '_');
     const page = Object.assign(
       this.props.page,
@@ -52,21 +61,26 @@ export default class EditPage extends Component {
     const lastSlugPart = this.props.slug.split('/').reverse()[0];
     const fallbackTitle = titleCase(lastSlugPart.replace(/_/g, ' '));
 
-    return <form onSubmit={ev => this.submit(ev)}>
+    return <main>
       <Head>
         <link href='/static/simplemde.min.css' rel='stylesheet' />
       </Head>
       <Header>
-        <MenuLink preload href={{pathname: '/page', query: {slug: this.props.slug}}} as={this.props.slug}>Back</MenuLink>
+        <MenuLink right danger preload href={{pathname: '/page', query: {slug: this.props.slug}}} as={this.props.slug}>
+          Back
+        </MenuLink>
+        <MenuItem right primary onClick={ev => this.submit(ev)}>
+          Save
+        </MenuItem>
       </Header>
-      <h1>
-        <Input name='title' defaultValue={this.props.page.title || fallbackTitle} placeholder='Title' />
-      </h1>
-      <h2>
+      <Form ref={form => this.form = form}>
+        <Heading level={1}>
+          <Input name='title' defaultValue={this.props.page.title || fallbackTitle} placeholder='Title' />
+        </Heading>
+
         <Input name='slug' defaultValue={this.props.slug} placeholder='title' />
-      </h2>
-      <SimpleMDE value={this.state.content} onChange={content => this.setState({content})} />
-      <input type='submit' />
-    </form>;
+        <SimpleMDE value={this.state.content} onChange={content => this.setState({content})} />
+      </Form>
+    </main>;
   }
 }

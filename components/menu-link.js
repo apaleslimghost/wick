@@ -6,6 +6,10 @@ import textRule, {ruleColor} from './text-rule';
 import {sansScale} from './type-scale';
 import {transparentize} from 'polished';
 import {Heading} from './typography';
+import colour from './colour';
+
+const transparentWhite = transparentize(0.8, '#fff');
+const transparentBlack = transparentize(0.8, '#000');
 
 const Anchor = styled.a`
 padding: 0 1rem;
@@ -14,12 +18,17 @@ display: inline-block;
 text-decoration: none;
 color: ${grey[0]};
 
+${({primary}) => primary && colour('blue')}
+${({danger}) => danger && colour('red')}
+
+order: ${({right}) => right ? 2 : 0};
+
 &:hover {
-	background: ${transparentize(0.9, teal[4])};
+	background-image: linear-gradient(to bottom, ${transparentWhite} 0%, ${transparentWhite} 100%);
 }
 
 &:active {
-	background: ${transparentize(0.6, teal[4])};
+	background-image: linear-gradient(to bottom, ${transparentBlack} 0%, ${transparentBlack} 100%);
 }
 `;
 
@@ -28,7 +37,13 @@ display: block;
 ${sansScale(0)}
 `;
 
-export default class Link extends Component {
+export const MenuItem = ({logo, children, ...props}) => <Anchor href='#' {...props}>
+	{logo ?
+		<Heading level={6} anchor={false}>{children}</Heading>
+		: <Shim>{children}</Shim>}
+</Anchor>;
+
+export default class MenuLink extends Component {
 	state = {};
 
 	componentDidMount() {
@@ -39,13 +54,9 @@ export default class Link extends Component {
 	}
 
 	render() {
-		const {primary, children, title, ...props} = this.props;
-		return <NextLink {...props} ref={link => this.link = link}>
-			<Anchor href={this.state.as || this.state.href} title={title}>
-				{primary ?
-					<Heading level={6} anchor={false}>{children}</Heading>
-					: <Shim>{children}</Shim>}
-			</Anchor>
+		const {href, as, ...props} = this.props;
+		return <NextLink {...{href, as}} ref={link => this.link = link}>
+			<MenuItem href={this.state.as || this.state.href} {...props} />
 		</NextLink>;
 	}
 };
