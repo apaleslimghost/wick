@@ -44,7 +44,10 @@ export const Link = ({href, title, children}) => href[0] === '/' ?
 	{children}
 </WickLink> : <a href={href} title={title}>{children}</a>;
 
-export const Paragraph = styled.p`${sansScale(0)}`;
+export const Paragraph = styled.p`
+${sansScale(0)}
+overflow: hidden;
+`;
 
 const blockquoteFudge = 0.25;
 
@@ -72,6 +75,6 @@ const roundImgSize = ({rect}) => {
 export const Image = withResize(styled.img`
 max-width: 100%;
 height: auto;
-margin: 1rem auto ${props => 1 + roundImgSize(props)}rem;
+margin: 1rem auto ${roundImgSize}rem;
 display: block;
 `);
