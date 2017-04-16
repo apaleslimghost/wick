@@ -1,9 +1,11 @@
+import {Component} from 'react';
 import WickLink from './link';
 import styled, {css} from 'styled-components';
-import {sansScale, serifScale} from './type-scale';
+import {sansScale, serifScale, baseSize} from './type-scale';
 import range from 'lodash.range';
 import paramCase from 'param-case';
 import {grey} from '@quarterto/colours';
+import {withResize} from 'react-element-breakpoints';
 
 export const header = level => styled(`h${level}`)`
 margin: 0;
@@ -61,3 +63,16 @@ export const List = ({type, children}) => {
 
 	return <StyledList>{children}</StyledList>;
 };
+
+const roundImgSize = ({rect}) => {
+	const roundedHeight = baseSize * Math.ceil(rect.height / baseSize);
+	console.log(rect.height, roundedHeight);
+	return (roundedHeight - rect.height) / baseSize;
+};
+
+export const Image = withResize(styled.img`
+max-width: 100%;
+height: auto;
+margin: 1rem auto ${props => 1 + roundImgSize(props)}rem;
+display: block;
+`);
