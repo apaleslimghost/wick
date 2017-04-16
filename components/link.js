@@ -6,7 +6,7 @@ import textRule, {ruleColor} from './text-rule';
 
 const Anchor = styled.a`
 color: ${blue[3]};
-${textRule(blue[3])}
+${({theme = {}}) => textRule(blue[3], theme.background)}
 
 &:hover {
 	color: ${blue[4]};

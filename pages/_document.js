@@ -8,8 +8,14 @@ import {transparentize} from 'polished';
 const setOpacity = (o, c) => transparentize(1 - o, c);
 
 injectGlobal`
+* { box-sizing: border-box }
+
 :root {
 	font-size: ${baseSize}px;
+}
+
+:root.show-grid {
+	position: relative;
 }
 
 :root.show-grid::after {
@@ -20,7 +26,7 @@ injectGlobal`
 	top: 0;
 	left: 0;
 	right: 0;
-	height: 100%;
+	bottom: 0;
 
 	background-image: repeating-linear-gradient(
 		transparent,
@@ -41,7 +47,6 @@ export default class MyDocument extends Document {
 		const styles = (
 			<style dangerouslySetInnerHTML={{ __html: styleSheet.rules().map(rule => rule.cssText).join('\n') }} />
 		);
-		styleSheet.flush();
 		return { ...page, styles }
 	}
 

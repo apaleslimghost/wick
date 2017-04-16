@@ -3,13 +3,13 @@ import range from 'lodash.range';
 
 export const baseSize = 16;
 export const capHeights = {
-	'Merriweather': 0.7,
-	'Merriweather Sans': 0.5,
+	'Merriweather': 0.8,
+	'Merriweather Sans': 0.9,
 };
 
 const props = font => scale => {
 	const lineHeight = Math.floor(scale) + 1;
-	const baselineDistance = (lineHeight - capHeights[font]) / 2;
+	const baselineDistance = (lineHeight - capHeights[font] * scale) / 2;
 
 	return css`
 	font-family: ${font};

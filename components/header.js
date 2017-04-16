@@ -3,10 +3,24 @@ import Head from 'next/head';
 import Link from 'next/link';
 import NProgress from 'nprogress';
 import Router from 'next/router';
-import styled from 'styled-components';
+import styled, {ThemeProvider} from 'styled-components';
 import {sansScale} from './type-scale';
+import {maxWidth} from './grid';
+import {grey, teal} from '@quarterto/colours';
 
-const Nav = styled.nav`${sansScale(0)}`;
+const headerBackground = {
+  background: grey[6]
+};
+
+const HeaderBar = styled.header`
+background: ${({theme = {}}) => theme.background};
+border-bottom: 1px ${grey[5]} solid;
+`;
+
+const Nav = styled.nav`
+${sansScale(0)}
+${maxWidth}
+`;
 
 Router.onRouteChangeStart = (url) => {
   console.log(`Loading: ${url}`)
@@ -21,12 +35,16 @@ Router.onRouteChangeError = () => NProgress.done();
 
 export default class Header extends Component {
   render() {
-    return <header>
-      <Head>
-        <link rel='stylesheet' href='/static/nprogress.css' />
-      </Head>
+    return <ThemeProvider theme={headerBackground}>
+      <HeaderBar>
+        <Head>
+          <link rel='stylesheet' href='/static/nprogress.css' />
+        </Head>
 
-      <Nav>{this.props.children}</Nav>
-    </header>;
+        <Nav>
+          {this.props.children}
+        </Nav>
+      </HeaderBar>
+    </ThemeProvider>;
   }
 }
