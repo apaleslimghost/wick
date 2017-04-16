@@ -66,7 +66,6 @@ export const List = ({type, children}) => {
 
 const roundImgSize = ({rect}) => {
 	const roundedHeight = baseSize * Math.ceil(rect.height / baseSize);
-	console.log(rect.height, roundedHeight);
 	return (roundedHeight - rect.height) / baseSize;
 };
 
