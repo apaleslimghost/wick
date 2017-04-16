@@ -5,7 +5,7 @@ import range from 'lodash.range';
 import paramCase from 'param-case';
 import {grey} from '@quarterto/colours';
 
-const header = level => styled(`h${level}`)`
+export const header = level => styled(`h${level}`)`
 margin: 0;
 ${serifScale(7 - level)}
 

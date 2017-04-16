@@ -39,7 +39,7 @@ ${sansScale(0)}
 
 export const MenuItem = ({logo, children, ...props}) => <Anchor href='#' {...props}>
 	{logo ?
-		<Heading level={6} anchor={false}>{children}</Heading>
+		<Heading level={5} anchor={false}>{children}</Heading>
 		: <Shim>{children}</Shim>}
 </Anchor>;
 

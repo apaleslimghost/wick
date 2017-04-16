@@ -8,9 +8,11 @@ import Router from 'next/router';
 import getPage from '../get-page';
 import SimpleMDE from 'react-simplemde-editor';
 import Header from '../components/header';
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 import {maxWidth} from '../components/grid';
-
+import {teal} from '@quarterto/colours';
+import {sansScale, serifScale} from '../components/type-scale';
+import range from 'lodash.range';
 import {Heading} from '../components/typography';
 
 const Form = styled.form`
@@ -19,6 +21,32 @@ ${maxWidth}
 
 const Input = styled.input`
 font: inherit;
+border: 0 none;
+background: none;
+border-bottom: .1em ${teal[5]} solid;
+margin-bottom: 1rem;
+
+&:focus {
+  outline: 0 none;
+  border-color: ${teal[4]};
+}
+`;
+
+const Editor = styled(SimpleMDE)`
+${sansScale(0)}
+
+.cm-formatting {
+  opacity: 0.3;
+}
+
+.CodeMirror .CodeMirror-code {
+  ${range(5).map(i => css`
+  .cm-header-${i + 1} {
+    display: inline-block;
+    margin: 0;
+    ${serifScale(6 - i)}
+  }`)}
+}
 `;
 
 export default class EditPage extends Component {
@@ -74,12 +102,12 @@ export default class EditPage extends Component {
         </MenuItem>
       </Header>
       <Form ref={form => this.form = form}>
-        <Heading level={1}>
+        <Heading anchor={false} level={1}>
           <Input name='title' defaultValue={this.props.page.title || fallbackTitle} placeholder='Title' />
         </Heading>
 
         <Input name='slug' defaultValue={this.props.slug} placeholder='title' />
-        <SimpleMDE value={this.state.content} onChange={content => this.setState({content})} />
+        <Editor value={this.state.content.trim()} onChange={content => this.setState({content})} />
       </Form>
     </main>;
   }
