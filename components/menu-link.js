@@ -6,7 +6,7 @@ import textRule, {ruleColor} from './text-rule';
 import {sansScale} from './type-scale';
 import {transparentize} from 'polished';
 import {Heading} from './typography';
-import colour from './colour';
+import colour, {setColour} from './colour';
 
 const transparentWhite = transparentize(0.8, '#fff');
 const transparentBlack = transparentize(0.8, '#000');
@@ -16,19 +16,19 @@ padding: 0 1rem;
 line-height: 3rem;
 display: inline-block;
 text-decoration: none;
-color: ${grey[0]};
 
+${({theme}) => setColour(theme.background)}
 ${({primary}) => primary && colour('blue')}
 ${({danger}) => danger && colour('red')}
 
 order: ${({right}) => right ? 2 : 0};
 
 &:hover {
-	background-image: linear-gradient(to bottom, ${transparentWhite} 0%, ${transparentWhite} 100%);
+	filter: brightness(1.1);
 }
 
 &:active {
-	background-image: linear-gradient(to bottom, ${transparentBlack} 0%, ${transparentBlack} 100%);
+	filter: brightness(0.9);
 }
 `;
 
