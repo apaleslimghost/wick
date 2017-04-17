@@ -14,7 +14,7 @@ const teaserBreakpoints = withBreakpoints({
 });
 
 const Teaser = styled.div`
-display: flex;
+display: ${bp('block', {m: 'flex'})};
 overflow: hidden;
 
 ${colour('grey', 6)}
@@ -59,7 +59,7 @@ ${sansScale(-3)};
 
 export default teaserBreakpoints(({title, content, slug, breakpoints, ...page}) =>
 <WickLink simple href={{pathname: 'page', query: {slug}}} as={slug}>
-	<Teaser>
+	<Teaser breakpoints={breakpoints}>
 		<TeaserHeading>
 			<typography.Heading anchor={false} level={bp(5, {
 				l: 3,
