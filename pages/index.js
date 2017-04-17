@@ -4,6 +4,7 @@ import MenuLink from '../components/menu-link';
 import styled from 'styled-components';
 import Teaser from '../components/teaser';
 import {maxWidth} from '../components/grid';
+import {Heading} from '../components/typography';
 
 const PageList = styled.nav`
 ${maxWidth}
@@ -13,6 +14,7 @@ const HomePage = ({pages = []}) => <div>
 	<Header />
 
 	<PageList>
+		<Heading level={2}>Recently Updated</Heading>
 		{pages.map(page => <Teaser {...page} key={page._id} />)}
 	</PageList>
 </div>;
