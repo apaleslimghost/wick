@@ -1,20 +1,19 @@
 import {pages} from '../db';
-import Link from '../components/link';
 import Header from '../components/header';
 import MenuLink from '../components/menu-link';
 import styled from 'styled-components';
+import Teaser from '../components/teaser';
+import {maxWidth} from '../components/grid';
 
-const PageList = styled.ul``;
+const PageList = styled.nav`
+${maxWidth}
+`;
 
 const HomePage = ({pages = []}) => <div>
 	<Header />
 
 	<PageList>
-		{pages.map(page => <li key={page._id}>
-			<Link href={{pathname: 'page', query: {slug: page.slug}}} as={page.slug}>
-				{page.title}
-			</Link>
-		</li>)}
+		{pages.map(page => <Teaser {...page} key={page._id} />)}
 	</PageList>
 </div>;
 
