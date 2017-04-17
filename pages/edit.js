@@ -94,31 +94,44 @@ export default class EditPage extends Component {
       }));
     }
 
-    Router.push({pathname: '/page', query: {slug}}, slug);
+    if(slug === '/_index') {
+      Router.push({pathname: '/index'}, '/');
+    } else {
+      Router.push({pathname: '/page', query: {slug}}, slug);
+    }
   }
 
   render() {
     const lastSlugPart = this.props.slug.split('/').reverse()[0];
     const fallbackTitle = titleCase(lastSlugPart.replace(/_/g, ' '));
+    const isNewPage = !this.props.slug;
+    const isHomePage = this.props.slug === '/_index';
 
     return <main>
       <Head>
         <link href='/static/simplemde.min.css' rel='stylesheet' />
       </Head>
+
       <Header>
-        <MenuLink right danger preload href={{pathname: '/page', query: {slug: this.props.slug}}} as={this.props.slug}>
+        <MenuLink right danger preload href={isNewPage
+            ? {pathname: '/index'}
+            : {pathname: '/page', query: {slug: this.props.slug}}
+          } as={isNewPage ? '/' : this.props.slug}>
           Back
         </MenuLink>
         <MenuItem right primary onClick={ev => this.submit(ev)}>
           Save
         </MenuItem>
       </Header>
+
       <Form ref={form => this.form = form}>
         <Heading anchor={false} level={1}>
-          <Input name='title' defaultValue={this.props.page.title || fallbackTitle} placeholder='Title' />
+          {isHomePage
+            ? 'Home'
+            : <Input name='title' defaultValue={this.props.page.title || fallbackTitle} placeholder='Title' />}
         </Heading>
 
-        <Input name='slug' defaultValue={this.props.slug} placeholder='title' />
+        {!isHomePage && <Input name='slug' defaultValue={this.props.slug} placeholder='title' />}
         <Editor
           value={this.state.content.trim()}
           onChange={content => this.setState({content})}

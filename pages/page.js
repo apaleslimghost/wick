@@ -3,12 +3,12 @@ import Link from '../components/link';
 import MenuLink from '../components/menu-link';
 import Router from 'next/router';
 import Markdown from 'react-markdown';
+import * as typography from '../components/typography';
 import Header from '../components/header';
 import styled from 'styled-components';
 import {sansScale} from '../components/type-scale';
 import {maxWidth} from '../components/grid';
 
-import * as typography from '../components/typography';
 
 export const Content = styled.article`
 ${maxWidth}
