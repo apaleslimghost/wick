@@ -10,13 +10,11 @@ import {maxWidth} from '../components/grid';
 
 import * as typography from '../components/typography';
 
-const Page = styled.main``;
-
 export const Content = styled.article`
 ${maxWidth}
 `;
 
-export const PagePage = ({page = {}, slug}) => <Page>
+export const PagePage = ({page = {}, slug}) => <main>
 	<Header>
 		<MenuLink prefetch href={{pathname: '/edit', query: {slug}}} as={`/_edit${slug}`}>Edit</MenuLink>
 	</Header>
@@ -28,7 +26,7 @@ export const PagePage = ({page = {}, slug}) => <Page>
 		</typography.Paragraph>
 		<Markdown source={page.content} renderers={typography} />
 	</Content>
-</Page>;
+</main>;
 
 PagePage.getInitialProps = async ({query, res}) => {
 	const result = await getPage(query.slug);

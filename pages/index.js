@@ -10,19 +10,25 @@ const PageList = styled.nav`
 ${maxWidth}
 `;
 
-const HomePage = ({pages = []}) => <div>
+const HomePage = ({recentlyUpdated = []}) => <div>
 	<Header />
 
 	<PageList>
 		<Heading level={2}>Recently Updated</Heading>
-		{pages.map(page => <Teaser {...page} key={page._id} />)}
+		{recentlyUpdated.map(page => <Teaser {...page} key={page._id} />)}
 	</PageList>
 </div>;
 
 HomePage.getInitialProps = async () => {
-	const {rows} = await pages.allDocs({include_docs: true});
+	const {docs: recentlyUpdated} = await pages.find({
+		selector: {lastUpdated: {$gt: null}},
+		fields: ['_id', 'title', 'content', 'lastUpdated', 'slug'],
+		sort: [{lastUpdated: 'desc'}],
+		limit: 5,
+	});
+
 	return {
-		pages: rows.map(row => row.doc).filter(({_id}) => !_id.startsWith('_design/'))
+		recentlyUpdated
 	};
 };
 

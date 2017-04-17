@@ -15,4 +15,10 @@ pages.createIndex({
   }
 });
 
+pages.createIndex({
+  index: {
+    fields: ['lastUpdated']
+  }
+});
+
 Object.assign(exports, {PouchDB, db, pages});

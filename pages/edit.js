@@ -65,7 +65,7 @@ export default class EditPage extends Component {
   constructor(props, ...args) {
     super(props, ...args);
     this.state = {
-      content: props.page.content
+      content: props.page.content || ''
     };
   }
 
