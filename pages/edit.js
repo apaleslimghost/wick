@@ -13,7 +13,7 @@ import {maxWidth} from '../components/grid';
 import {teal} from '@quarterto/colours';
 import {sansScale, serifScale} from '../components/type-scale';
 import range from 'lodash.range';
-import {Heading} from '../components/typography';
+import {Heading, Paragraph} from '../components/typography';
 
 const Form = styled.form`
 ${maxWidth}
@@ -36,7 +36,7 @@ const Editor = styled(SimpleMDE)`
 ${sansScale(0)}
 
 .CodeMirror {
-  height: calc(100vh - 20rem);
+  height: calc(100vh - 25rem);
   overflow-y: auto;
 }
 
@@ -64,9 +64,17 @@ const editorToolbar = [
 export default class EditPage extends Component {
   constructor(props, ...args) {
     super(props, ...args);
-    this.state = {
-      content: props.page.content || ''
-    };
+
+    const lastSlugPart = props.slug.split('/').reverse()[0];
+    const fallbackTitle = titleCase(lastSlugPart.replace(/_/g, ' '));
+
+    this.state = Object.assign({
+      title: fallbackTitle,
+      content: '',
+      slug: '',
+    }, props.page);
+
+    this.state.slug = this.state.slug.slice(1);
   }
 
   static getInitialProps({query}) {
@@ -78,7 +86,7 @@ export default class EditPage extends Component {
     if(!this.form) return;
 
     const form = formJson(this.form);
-    const slug = (form.slug || this.props.slug).replace(/ /g, '_');
+    const slug = (form.slug || this.props.slug).replace(/ /g, '_').replace(/^\/?/, '/');
     const page = Object.assign(
       this.props.page,
       form,
@@ -102,9 +110,7 @@ export default class EditPage extends Component {
   }
 
   render() {
-    const lastSlugPart = this.props.slug.split('/').reverse()[0];
-    const fallbackTitle = titleCase(lastSlugPart.replace(/_/g, ' '));
-    const isNewPage = !this.props.slug;
+    const isNewPage = !this.props.slug || !this.props.found;
     const isHomePage = this.props.slug === '/_index';
 
     return <main>
@@ -113,10 +119,10 @@ export default class EditPage extends Component {
       </Head>
 
       <Header>
-        <MenuLink right danger preload href={isNewPage
+        <MenuLink right danger preload href={isNewPage || isHomePage
             ? {pathname: '/index'}
             : {pathname: '/page', query: {slug: this.props.slug}}
-          } as={isNewPage ? '/' : this.props.slug}>
+          } as={isNewPage || isHomePage ? '/' : this.props.slug}>
           Back
         </MenuLink>
         <MenuItem right primary onClick={ev => this.submit(ev)}>
@@ -124,14 +130,18 @@ export default class EditPage extends Component {
         </MenuItem>
       </Header>
 
-      <Form ref={form => this.form = form}>
+      <Form innerRef={form => this.form = form}>
         <Heading anchor={false} level={1}>
           {isHomePage
             ? 'Home'
-            : <Input name='title' defaultValue={this.props.page.title || fallbackTitle} placeholder='Title' />}
+            : <Input name='title' value={this.state.title} onChange={ev => this.setState({title: ev.target.value})} placeholder='Title' key='fhs' />}
         </Heading>
 
-        {!isHomePage && <Input name='slug' defaultValue={this.props.slug} placeholder='title' />}
+        {!isHomePage && <Paragraph>
+          /
+          <Input name='slug' value={this.state.slug} onChange={ev => this.setState({slug: ev.target.value})} placeholder='Page path' key='ffs' />
+        </Paragraph>}
+
         <Editor
           value={this.state.content.trim()}
           onChange={content => this.setState({content})}
