@@ -71,7 +71,7 @@ export default class EditPage extends Component {
     this.state = Object.assign({
       title: fallbackTitle,
       content: '',
-      slug: '',
+      slug: props.slug,
     }, props.page);
 
     this.state.slug = this.state.slug.slice(1);
