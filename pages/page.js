@@ -8,13 +8,13 @@ import Header from '../components/header';
 import styled from 'styled-components';
 import {sansScale} from '../components/type-scale';
 import {maxWidth} from '../components/grid';
-
+import TeaserGrid from '../components/teaser-grid';
 
 export const Content = styled.article`
 ${maxWidth}
 `;
 
-export const PagePage = ({page = {}, slug}) => <main>
+export const PagePage = ({page = {}, slug, subpages}) => <main>
 	<Header>
 		<MenuLink prefetch href={{pathname: '/edit', query: {slug}}} as={`/_edit${slug}`}>Edit</MenuLink>
 	</Header>
@@ -28,10 +28,12 @@ export const PagePage = ({page = {}, slug}) => <main>
 			Heading: ({level, ...props}) => <typography.Heading {...props} level={Math.min(level + 1, 6)} />
 		})} />
 	</Content>
+
+	{!!subpages.length && <TeaserGrid title='Subpages' items={subpages} />}
 </main>;
 
 PagePage.getInitialProps = async ({query, res}) => {
-	const result = await getPage(query.slug);
+	const result = await getPage(query.slug, {subpages: true});
 
 	if(result.found) {
 		return result;
