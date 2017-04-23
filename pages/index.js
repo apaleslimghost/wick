@@ -36,7 +36,9 @@ const HomePage = ({recentlyUpdated = [], homePage = {}}) => <div>
 	</Header>
 
 	{homePage.content &&
-		<Content><Markdown source={homePage.content} renderers={typography} /></Content>
+		<Content><Markdown source={homePage.content} renderers={Object.assign({}, typography, {
+			Heading: ({level, ...props}) => <typography.Heading {...props} level={Math.min(level + 1, 6)} />
+		})} /></Content>
 	}
 
 	<TeaserGrid title='Recently Updated' items={recentlyUpdated} />

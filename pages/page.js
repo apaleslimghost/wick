@@ -24,7 +24,9 @@ export const PagePage = ({page = {}, slug}) => <main>
 			{page.created && <time dateTime={new Date(page.created).toISOString()}>Created: {new Date(page.created).toLocaleString()}</time>}
 			{page.lastUpdated && <time dateTime={new Date(page.lastUpdated).toISOString()}>Last updated: {new Date(page.lastUpdated).toLocaleString()}</time>}
 		</typography.Paragraph>
-		<Markdown source={page.content} renderers={typography} />
+		<Markdown source={page.content} renderers={Object.assign({}, typography, {
+			Heading: ({level, ...props}) => <typography.Heading {...props} level={Math.min(level + 1, 6)} />
+		})} />
 	</Content>
 </main>;
 
