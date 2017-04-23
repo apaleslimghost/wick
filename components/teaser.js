@@ -19,9 +19,12 @@ overflow: hidden;
 
 ${colour('grey', 6)}
 border-left: 2px ${teal[3]} solid;
-padding: 1rem;
 margin-bottom: 1rem;
 height: calc(100% - 1rem);
+
+> * {
+	margin: 1rem;
+}
 
 a:hover & {
 	${colour('teal', 6)}
@@ -44,6 +47,7 @@ max-height: ${bp(6.2, {
 	m: 8.2
 })}rem;
 overflow: hidden;
+margin-bottom: 0.8rem;
 `;
 
 const Ruled = styled.span`
