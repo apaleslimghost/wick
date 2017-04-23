@@ -16,7 +16,8 @@ ${maxWidth}
 
 export const PagePage = ({page = {}, slug, subpages}) => <main>
 	<Header>
-		<MenuLink prefetch href={{pathname: '/edit', query: {slug}}} as={`/_edit${slug}`}>Edit</MenuLink>
+		<MenuLink right prefetch href={{pathname: '/edit', query: {slug}}} as={`/_edit${slug}`}>Edit</MenuLink>
+		<MenuLink right success prefetch href={{pathname: '/edit', query: {slug: slug + '/subpage'}}} as={`/_edit${slug}/subpage`}>Add subpage</MenuLink>
 	</Header>
 	<Content>
 		<typography.Heading level={1}>{page.title}</typography.Heading>
