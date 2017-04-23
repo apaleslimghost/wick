@@ -11,7 +11,7 @@ import colour, {setColour} from './colour';
 const transparentWhite = transparentize(0.8, '#fff');
 const transparentBlack = transparentize(0.8, '#000');
 
-const Anchor = styled.a`
+export const Anchor = styled.a`
 padding: 0 1rem;
 line-height: 3rem;
 display: inline-flex;
@@ -22,8 +22,6 @@ ${({theme}) => setColour(theme.background)}
 ${({primary}) => primary && colour('blue')}
 ${({danger}) => danger && colour('red')}
 ${({success}) => success && colour('green', 4)}
-
-order: ${({right}) => right ? 2 : 0};
 
 &:hover {
 	filter: brightness(1.1);
