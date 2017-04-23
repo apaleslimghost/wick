@@ -26,8 +26,6 @@ export default async (slug, {subpages = false, parents = false} = {}) => {
 			), []
 		);
 
-		console.log(parentSlugs);
-
 		parents$ = pages.find({
 			selector: {
 				$or: parentSlugs.map(slug => ({slug: {$eq: slug}}))

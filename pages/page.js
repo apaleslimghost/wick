@@ -47,8 +47,6 @@ export const PagePage = ({page = {}, slug, subpages, parents}) => <main>
 PagePage.getInitialProps = async ({query, res}) => {
 	const result = await getPage(query.slug, {subpages: true, parents: true});
 
-	console.log(result.parents);
-
 	if(result.found) {
 		return result;
 	}

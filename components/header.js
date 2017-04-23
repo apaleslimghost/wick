@@ -4,13 +4,18 @@ import MenuLink from '../components/menu-link';
 import NProgress from 'nprogress';
 import Router from 'next/router';
 import styled, {ThemeProvider} from 'styled-components';
-import {sansScale} from './type-scale';
+import {sansScale, baseSize} from './type-scale';
 import {maxWidth} from './grid';
 import {grey, teal} from '@quarterto/colours';
+import {withBreakpoints, bp} from 'react-element-breakpoints';
 
 const headerBackground = {
   background: grey[6]
 };
+
+const headerBreakpoints = withBreakpoints({
+  wide: ({width}) => (width / baseSize) > 30
+});
 
 const HeaderBar = styled.header`
 background: ${({theme = {}}) => theme.background};
@@ -26,6 +31,8 @@ display: flex;
 const Spacer = styled.div`
 flex: 1;
 order: 1;
+
+display: ${bp('none', {wide: 'block'})};
 `;
 
 Router.onRouteChangeStart = (url) => {
@@ -39,20 +46,16 @@ Router.onRouteChangeComplete = () => {
 
 Router.onRouteChangeError = () => NProgress.done();
 
-export default class Header extends Component {
-  render() {
-    return <ThemeProvider theme={headerBackground}>
-      <HeaderBar>
-        <Head>
-          <link rel='stylesheet' href='/static/nprogress.css' />
-        </Head>
+export default headerBreakpoints(({children, breakpoints}) => <ThemeProvider theme={headerBackground}>
+  <HeaderBar>
+    <Head>
+      <link rel='stylesheet' href='/static/nprogress.css' />
+    </Head>
 
-        <Nav>
-          <MenuLink href='/' logo>Wick</MenuLink>
-          {this.props.children}
-        <Spacer />
-        </Nav>
-      </HeaderBar>
-    </ThemeProvider>;
-  }
-}
+    <Nav>
+      <MenuLink href='/' logo>Wick</MenuLink>
+      {children}
+      <Spacer breakpoints={breakpoints} />
+    </Nav>
+  </HeaderBar>
+</ThemeProvider>);
