@@ -14,6 +14,8 @@ ${serifScale(7 - level)}
 padding-left: 1rem;
 margin-left: -1rem;
 
+flex-basis: 100%;
+
 &:hover a {
 	opacity: 1;
 }`;

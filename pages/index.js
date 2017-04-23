@@ -5,14 +5,29 @@ import styled from 'styled-components';
 import Teaser from '../components/teaser';
 import {maxWidth} from '../components/grid';
 import {Heading} from '../components/typography';
+import {baseSize} from '../components/type-scale';
 import getPage from '../get-page';
 import Markdown from 'react-markdown';
 import * as typography from '../components/typography';
 import {Content} from './page';
+import {withBreakpoints, bp} from 'react-element-breakpoints';
+
+const gridBreakpoints = withBreakpoints({
+	wide: ({width}) => (width / baseSize) > 30,
+});
 
 const PageList = styled.nav`
 ${maxWidth}
+
+display: flex;
+flex-wrap: wrap;
+justify-content: space-between;
 `;
+
+const TeaserGrid = gridBreakpoints(({breakpoints, title, items}) => <PageList>
+	<Heading level={2}>{title}</Heading>
+	{items.map(page => <Teaser {...page} key={page._id} columns={bp(1, {wide: 2})({breakpoints})} />)}
+</PageList>);
 
 const HomePage = ({recentlyUpdated = [], homePage = {}}) => <div>
 	<Header>
@@ -24,10 +39,7 @@ const HomePage = ({recentlyUpdated = [], homePage = {}}) => <div>
 		<Content><Markdown source={homePage.content} renderers={typography} /></Content>
 	}
 
-	<PageList>
-		<Heading level={2}>Recently Updated</Heading>
-		{recentlyUpdated.map(page => <Teaser {...page} key={page._id} />)}
-	</PageList>
+	<TeaserGrid title='Recently Updated' items={recentlyUpdated} />
 </div>;
 
 HomePage.getInitialProps = async () => {

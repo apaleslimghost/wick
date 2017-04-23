@@ -4,7 +4,16 @@ import styled, {css} from 'styled-components';
 import {teal} from '@quarterto/colours';
 import textRule, {ruleColor} from './text-rule';
 
+const colBasis = columns => {
+	const baseWidth = 100 / columns;
+	const gutter = (columns - 1) / columns;
+
+	return `${baseWidth.toFixed(2)}% - ${gutter.toFixed(2)}rem`;
+};
+
 const Anchor = styled.a`
+${({columns}) => columns && css`flex-basis: calc(${colBasis(columns)})`};
+
 ${({theme = {}, simple = false}) => simple
 ? css`
 text-decoration: none;
@@ -36,9 +45,9 @@ export default class Link extends Component {
 	}
 
 	render() {
-		const {children, title, simple, ...props} = this.props;
+		const {children, title, simple, columns, ...props} = this.props;
 		return <NextLink {...props} ref={link => this.link = link}>
-			<Anchor href={this.state.as || this.state.href} title={title} simple={simple}>{children}</Anchor>
+			<Anchor href={this.state.as || this.state.href} title={title} simple={simple}  columns={columns}>{children}</Anchor>
 		</NextLink>;
 	}
 };

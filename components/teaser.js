@@ -1,5 +1,5 @@
 import {withBreakpoints, bp} from 'react-element-breakpoints';
-import styled, {ThemeProvider} from 'styled-components';
+import styled, {ThemeProvider, css} from 'styled-components';
 import * as typography from './typography';
 import {sansScale, baseSize} from './type-scale';
 import {grey, teal} from '@quarterto/colours';
@@ -21,6 +21,7 @@ ${colour('grey', 6)}
 border-left: 2px ${teal[3]} solid;
 padding: 1rem;
 margin-bottom: 1rem;
+height: calc(100% - 1rem);
 
 a:hover & {
 	${colour('teal', 6)}
@@ -38,10 +39,11 @@ flex: 1;
 const Excerpt = styled(Markdown)`
 flex: 1;
 color: ${grey[3]};
-max-height: ${bp(6, {
-	l: 12,
-	m: 8
+max-height: ${bp(6.2, {
+	l: 12.2,
+	m: 8.2
 })}rem;
+overflow: hidden;
 `;
 
 const Ruled = styled.span`
@@ -57,8 +59,8 @@ color: ${grey[3]};
 ${sansScale(-3)};
 `;
 
-export default teaserBreakpoints(({title, content, slug, breakpoints, ...page}) =>
-<WickLink simple href={{pathname: 'page', query: {slug}}} as={slug}>
+export default teaserBreakpoints(({title, content, slug, breakpoints, columns, ...page}) =>
+<WickLink simple href={{pathname: 'page', query: {slug}}} as={slug} columns={columns}>
 	<Teaser breakpoints={breakpoints}>
 		<TeaserHeading>
 			<typography.Heading anchor={false} level={bp(5, {
