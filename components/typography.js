@@ -20,6 +20,8 @@ flex-basis: 100%;
 	opacity: 1;
 }`;
 
+const headers = range(6).map(level => header(level + 1));
+
 const AnchorLink = styled.a`
 display: inline-block;
 opacity: 0;
@@ -32,7 +34,7 @@ transition: opacity 0.2s;
 `;
 
 export const Heading = ({level, children, anchor = true, ...props}) => {
-	const H = header(level);
+	const H = headers[level - 1];
 	const id = paramCase([].concat(children)[0]);
 
 	return <H {...props} id={anchor ? id : null}>
