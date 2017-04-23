@@ -1,19 +1,36 @@
 import {pages} from './db';
 
-export default async (slug, {subpages = false} = {}) => {
+export default async (slug, {subpages = false, parents = false} = {}) => {
 	const page$ = pages.find({
 		selector: {slug},
 		limit: 1,
 	});
 
 	let subpages$ = Promise.resolve({});
-
 	if(subpages) {
 		subpages$ = pages.find({
 			selector: {
 				slug: {
 					$regex: `^${slug}/`,
 				},
+			},
+		});
+	}
+
+	let parents$ = Promise.resolve({});
+	if(parents) {
+		const parts = slug.split('/').filter(a => a).slice(0, -1);
+		const parentSlugs = parts.reduce(
+			(slugs, part) => slugs.concat(
+				(slugs[slugs.length - 1] || '') + `/${part}`
+			), []
+		);
+
+		console.log(parentSlugs);
+
+		parents$ = pages.find({
+			selector: {
+				$or: parentSlugs.map(slug => ({slug: {$eq: slug}}))
 			},
 		});
 	}
@@ -25,5 +42,6 @@ export default async (slug, {subpages = false} = {}) => {
 		slug,
 		found: !!page,
 		subpages: (await subpages$).docs,
+		parents: (await parents$).docs,
 	};
 };

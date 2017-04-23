@@ -14,8 +14,19 @@ export const Content = styled.article`
 ${maxWidth}
 `;
 
-export const PagePage = ({page = {}, slug, subpages}) => <main>
+const PageLink = ({slug, _id, title}) => <MenuLink
+	href={{pathname: '/page', query: {slug}}}
+	as={slug} crumb
+>{title}</MenuLink>;
+
+export const PagePage = ({page = {}, slug, subpages, parents}) => <main>
 	<Header>
+		{parents.map(
+			parent => <PageLink key={parent._id} {...parent} />
+		)}
+
+		<PageLink {...page} />
+
 		<MenuLink right prefetch href={{pathname: '/edit', query: {slug}}} as={`/_edit${slug}`}>Edit</MenuLink>
 		<MenuLink right success prefetch href={{pathname: '/edit', query: {slug: slug + '/subpage'}}} as={`/_edit${slug}/subpage`}>Add subpage</MenuLink>
 	</Header>
@@ -34,7 +45,9 @@ export const PagePage = ({page = {}, slug, subpages}) => <main>
 </main>;
 
 PagePage.getInitialProps = async ({query, res}) => {
-	const result = await getPage(query.slug, {subpages: true});
+	const result = await getPage(query.slug, {subpages: true, parents: true});
+
+	console.log(result.parents);
 
 	if(result.found) {
 		return result;

@@ -1,6 +1,6 @@
 import {Component} from 'react';
 import NextLink from 'next/link';
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 import {teal, grey} from '@quarterto/colours';
 import textRule, {ruleColor} from './text-rule';
 import {sansScale} from './type-scale';
@@ -14,7 +14,8 @@ const transparentBlack = transparentize(0.8, '#000');
 const Anchor = styled.a`
 padding: 0 1rem;
 line-height: 3rem;
-display: inline-block;
+display: inline-flex;
+position: relative;
 text-decoration: none;
 
 ${({theme}) => setColour(theme.background)}
@@ -31,10 +32,21 @@ order: ${({right}) => right ? 2 : 0};
 &:active {
 	filter: brightness(0.9);
 }
+
+${({crumb}) => crumb && css`
+&::before {
+	content: '▸';
+	position: absolute;
+	top: 0.1rem;
+	left: -0.2rem;
+	color: ${grey[5]};
+}
+`}
 `;
 
 const Shim = styled.span`
 display: block;
+flex: 1;
 ${sansScale(0)}
 `;
 
