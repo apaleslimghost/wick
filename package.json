@@ -16,7 +16,7 @@
     "express": "^4.15.2",
     "express-pouchdb": "^2.3.5",
     "lodash.range": "^3.2.0",
-    "next": "^2.1.1",
+    "next": "^2.4.3",
     "nprogress": "^0.2.0",
     "param-case": "^2.1.1",
     "polished": "^1.0.2",
@@ -27,7 +27,7 @@
     "react-element-breakpoints": "^1.0.2",
     "react-markdown": "^2.4.6",
     "react-simplemde-editor": "^3.6.10",
-    "styled-components": "^1.4.4",
+    "styled-components": "^2.0.1",
     "title-case": "^2.1.1"
   },
   "engines": {

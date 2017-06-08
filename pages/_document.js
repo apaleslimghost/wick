@@ -1,5 +1,5 @@
-import Document, { Head, Main, NextScript } from 'next/document';
-import styleSheet from 'styled-components/lib/models/StyleSheet';
+import Document, {Head, Main, NextScript} from 'next/document';
+import {ServerStyleSheet} from 'styled-components'
 import {injectGlobal} from 'styled-components';
 import {baseSize} from '../components/type-scale';
 import {teal} from '@quarterto/colours';
@@ -42,24 +42,21 @@ body {
 `;
 
 export default class MyDocument extends Document {
-	static async getInitialProps ({ renderPage }) {
-		const page = renderPage()
-		const styles = (
-			<style dangerouslySetInnerHTML={{ __html: styleSheet.rules().map(rule => rule.cssText).join('\n') }} />
-		);
-		return { ...page, styles }
-	}
+	render () {
+		const sheet = new ServerStyleSheet();
+		const main = sheet.collectStyles(<Main />);
+		const styleTags = sheet.getStyleElement();
 
-  render () {
-    return <html>
-      <Head>
-        <title>My page</title>
+		return <html>
+			<Head>
+				<title>My page</title>
+				{styleTags}
 				<link href='https://fonts.googleapis.com/css?family=Merriweather+Sans:300,300i,700,700i|Merriweather:900' rel='stylesheet' />
-      </Head>
-      <body>
-        <Main />
-        <NextScript />
-      </body>
-    </html>;
-  }
+			</Head>
+			<body>
+				{main}
+				<NextScript />
+			</body>
+		</html>;
+	}
 }
