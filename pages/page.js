@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import {sansScale} from '../components/type-scale';
 import {maxWidth} from '../components/grid';
 import TeaserGrid from '../components/teaser-grid';
+import RelativeDate from '../components/date';
 
 export const Content = styled.article`
 ${maxWidth}
@@ -32,13 +33,17 @@ export const PagePage = ({page = {}, slug, subpages, parents}) => <main>
 	</Header>
 	<Content>
 		<typography.Heading level={1}>{page.title}</typography.Heading>
-		<typography.Paragraph>
-			{page.created && <time dateTime={new Date(page.created).toISOString()}>Created: {new Date(page.created).toLocaleString()}</time>}
-			{page.lastUpdated && <time dateTime={new Date(page.lastUpdated).toISOString()}>Last updated: {new Date(page.lastUpdated).toLocaleString()}</time>}
-		</typography.Paragraph>
 		<Markdown source={page.content} renderers={Object.assign({}, typography, {
 			Heading: ({level, ...props}) => <typography.Heading {...props} level={Math.min(level + 1, 6)} />
 		})} />
+
+		<typography.HR />
+
+		<typography.Separated>
+			{page.created && <span><em>Created</em> <RelativeDate date={new Date(page.created)} /></span>}
+			{' ' /* jfc */}
+			{page.lastUpdated && <span><em>Last updated</em> <RelativeDate date={new Date(page.lastUpdated)} /></span>}
+		</typography.Separated>
 	</Content>
 
 	{!!subpages.length && <TeaserGrid title='Subpages' items={subpages} />}

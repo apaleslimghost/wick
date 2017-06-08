@@ -15,6 +15,7 @@
     "contrast": "^1.0.1",
     "express": "^4.15.2",
     "express-pouchdb": "^2.3.5",
+    "human-date": "^1.4.0",
     "lodash.range": "^3.2.0",
     "next": "^2.4.3",
     "nprogress": "^0.2.0",

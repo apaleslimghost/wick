@@ -1,4 +1,4 @@
-import {Component} from 'react';
+import React, {Component, Children} from 'react';
 import WickLink from './link';
 import styled, {css} from 'styled-components';
 import {sansScale, serifScale, baseSize} from './type-scale';
@@ -51,6 +51,25 @@ export const Link = ({href, title, children}) => href[0] === '/' ?
 export const Paragraph = styled.p`
 ${sansScale(0)}
 overflow: hidden;
+`;
+
+export const Separated = styled.p`
+${sansScale(-3)}
+
+& > *:after {
+	content: ' ${({separator = '∙'}) => separator} ';
+}
+
+& > *:last-child:after {
+	content: none;
+}
+`;
+
+export const HR = styled.hr`
+${sansScale(0)}
+
+border: 1px solid transparent;
+border-top: 1px solid ${grey[5]};
 `;
 
 const blockquoteFudge = 0.25;
