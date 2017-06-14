@@ -7,19 +7,23 @@
   "description": "What am I about?",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "nodemon -w server.js server.js"
   },
   "dependencies": {
     "@quarterto/colours": "^1.0.0",
     "@quarterto/form-json": "^1.0.0",
+    "body-parser": "^1.17.2",
     "contrast": "^1.0.1",
     "express": "^4.15.2",
     "express-pouchdb": "^2.3.5",
     "human-date": "^1.4.0",
+    "linkstate": "^1.0.1",
+    "lodash.debounce": "^4.0.8",
     "lodash.range": "^3.2.0",
     "next": "^2.4.3",
     "nprogress": "^0.2.0",
     "param-case": "^2.1.1",
+    "passport": "^0.3.2",
     "polished": "^1.0.2",
     "pouchdb": "^6.1.2",
     "pouchdb-find": "^0.10.5",
@@ -29,6 +33,7 @@
     "react-markdown": "^2.4.6",
     "react-simplemde-editor": "^3.6.10",
     "styled-components": "^2.0.1",
+    "superlogin": "^0.6.1",
     "title-case": "^2.1.1"
   },
   "engines": {
@@ -42,5 +47,8 @@
     "node",
     "glitch",
     "express"
-  ]
+  ],
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
 }
