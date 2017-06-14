@@ -13,7 +13,7 @@ class LoginPage extends Component {
 		email: '',
 		password: '',
 		confirmPassword: '',
-		usernameExists: true, // show login state by default
+		registering: false, // show login state by default
 	};
 
 	constructor(...args) {
@@ -23,12 +23,18 @@ class LoginPage extends Component {
 
 	async checkUsername(ev) {
 		const {value: username} = ev.target;
-		if(username.length < 3) return;
+		let registering = false;
 
-		const response = await fetch(`/_auth/validate-username/${username}`);
-		this.setState({
-			usernameExists: response.statusCode === 409
-		});
+		if(username.length < 3) {
+			registering = false;
+		} else {
+			const response = await fetch(`/_auth/validate-username/${username}`);
+			registering = (response.status === 200);
+		}
+
+		console.log(registering);
+
+		this.setState({ registering });
 	}
 
 	render() {
@@ -40,7 +46,33 @@ class LoginPage extends Component {
 				name='username'
 			/>
 
-		{this.state.usernameExists ? 'yup' : 'nope'}
+			<input
+				type="password"
+				onChange={linkState(this, 'password')}
+				value={this.state.password}
+				name='password'
+			/>
+
+			{this.state.registering && <input
+				type="password"
+				onChange={linkState(this, 'confirmPassword')}
+				value={this.state.confirmPassword}
+				name='confirmPassword'
+			/>}
+
+			{this.state.registering && <input
+				type="email"
+				onChange={linkState(this, 'email')}
+				value={this.state.email}
+				name='email'
+			/>}
+
+			{this.state.registering && <input
+				type="text"
+				onChange={linkState(this, 'name')}
+				value={this.state.name}
+				name='name'
+			/>}
 		</form>;
 	}
 }
