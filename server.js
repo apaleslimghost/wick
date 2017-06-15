@@ -8,6 +8,8 @@ const Superlogin = require('superlogin');
 const passport = require('passport');
 const url = require('url');
 
+require('dotenv/config');
+
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
@@ -31,7 +33,7 @@ app.prepare().then(() => {
 
   server.use('/_api', expressPouch(PouchDB, {logPath: '.data/log.txt'}));
   server.use('/_auth', superlogin.router);
-  server.get('/_user/login', (req, res) => app.render(req, res, '/login'));
+  server.get('/_user/login', (req, res) => app.render(req, res, '/login', req.query));
 
   server.get('/', requireAuth(), (req, res) => app.render(req, res, '/'));
   server.get(
