@@ -7,5 +7,4 @@ background-color: ${colour};
 color: ${contrast(colour) === 'light' ? colours.grey[0] : colours.grey[6]};
 `;
 
-
 export default (colour, level = 3) => setColour(colours[colour][[level]]);

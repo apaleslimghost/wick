@@ -85,50 +85,58 @@ const Buttons = styled.div`
 margin-top: 1rem;
 `;
 
-const ValidationMessage = styled.div`
+const ValidationMessage = styled.span`
 ${sansScale(-3)}
+float: right;
 `;
 
 const indeterminate = {is: i => i === 'indeterminate'};
 const valid = {is: i => i === 'valid'};
 const invalid = message => ({is: i => i === 'invalid', message});
 
-
-
 class Field extends Component {
 	state = {
 		showValidation: false,
 	};
+
+	get name() {
+		return this.props.name || this.props.label.toLowerCase();
+	}
+
+	getValidationState() {
+		return this.state.showValidation
+			? this.props.isValid(this.props.form.state[this.name], this.props.form.state)
+			: indeterminate;
+	}
 
 	render() {
 		const {
 			label,
 			form,
 			placeholder,
-			name = label.toLowerCase(),
 			type = 'text',
-			onChange = linkState(form, name),
+			onChange = linkState(form, this.name),
 			isValid = () => indeterminate
 		} = this.props;
-		const validationResult = this.state.showValidation
-			? isValid(form.state[name], form.state)
-			: indeterminate;
+		const validationResult = this.getValidationState();
 
 		return <FieldWrapper valid={validationResult.is('valid')} invalid={validationResult.is('invalid')}>
-			<Label htmlFor={name}>{label}</Label>
+			<Label htmlFor={this.name}>
+				{label}
+
+				{validationResult.is('invalid') &&
+					<ValidationMessage>{validationResult.message}</ValidationMessage>}
+			</Label>
 
 			<Input
 				type={type}
 				placeholder={placeholder}
 				onChange={onChange}
-				value={form.state[name]}
-				name={name}
-				id={name}
+				value={form.state[this.name]}
+				name={this.name}
+				id={this.name}
 				onBlur={() => this.setState({showValidation: true})}
 			/>
-
-		{validationResult.is('invalid') &&
-			<ValidationMessage>{validationResult.message}</ValidationMessage>}
 		</FieldWrapper>;
 	}
 }
@@ -145,7 +153,6 @@ class LoginPage extends Component {
 	};
 
 	static getInitialProps({query}) {
-		console.log(query, registerSecret);
 		return {
 			canRegister: query.secret === registerSecret,
 			secret: query.secret
@@ -155,6 +162,17 @@ class LoginPage extends Component {
 	constructor(...args) {
 		super(...args);
 		this.checkUsername = debounce(this.checkUsername, 200).bind(this);
+		this.submit = this.submit.bind(this);
+		this.fields = new Set();
+	}
+
+	async submit(ev) {
+		ev.preventDefault();
+		this.fields.forEach(field => {
+			if(field) { // matt. matt no
+				field.setState({showValidation: true});
+			}
+		});
 	}
 
 	async checkUsername(ev) {
@@ -180,12 +198,13 @@ class LoginPage extends Component {
 
 			<Row>
 				<Field
+					ref={f => this.fields.add(f)}
 					label='Username'
 					onChange={fork(persist, this.checkUsername, linkState(this, 'username'))}
 					placeholder='person123'
 					isValid={(v, {registering, usernameAvailable}) =>
 						!v
-							? indeterminate
+							? invalid('Enter a username')
 							: registering
 								? usernameAvailable
 									? valid
@@ -198,25 +217,28 @@ class LoginPage extends Component {
 
 			<Row>
 				<Field
+					ref={f => this.fields.add(f)}
 					label='Password'
 					type='password'
 					placeholder='Secret'
 					isValid={v =>
 						!v
-							? indeterminate
+							? invalid('Enter a password')
 							: v.length >= 6
 								? valid
 								: invalid('Should be 6 or more characters')}
 					form={this} />
+
 				{this.state.registering &&
 					<Field
+						ref={f => this.fields.add(f)}
 						label='Confirm password'
 						name='confirmPassword'
 						type='password'
 						placeholder='Secret'
 						isValid={(value, {password}) =>
 							!value
-								? indeterminate
+								? invalid('Confirm your password')
 								: value === password
 									? valid
 									: invalid('Passwords should match')
@@ -227,12 +249,13 @@ class LoginPage extends Component {
 			<Row>
 				{this.state.registering &&
 					<Field
+						ref={f => this.fields.add(f)}
 						label='Email'
 						type='email'
 						placeholder='person@example.com'
 						isValid={v =>
 							!v
-								? indeterminate
+								? invalid('Enter an email')
 								: !!v.match(emailRegex)
 									? valid
 									: invalid(`${v} doesn't look like an email address`)}
@@ -240,18 +263,19 @@ class LoginPage extends Component {
 
 				{this.state.registering &&
 					<Field
+						ref={f => this.fields.add(f)}
 						label='Name'
 						placeholder='Person Lastname'
 						isValid={v =>
 							!v
-								? invalid('Please enter a name')
+								? invalid('Enter your name')
 								: valid}
 						form={this} />}
 			</Row>
 
 			<Row>
 				<Buttons>
-					<Button primary={!this.state.registering} success={this.state.registering}>
+					<Button primary={!this.state.registering} success={this.state.registering} onClick={this.submit}>
 						{this.state.registering ? 'Register' : 'Sign in'}
 					</Button>
 				</Buttons>
