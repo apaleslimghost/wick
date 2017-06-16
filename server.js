@@ -7,6 +7,7 @@ const expressPouch = require('express-pouchdb');
 const Superlogin = require('superlogin');
 const passport = require('passport');
 const url = require('url');
+const bodyparser = require('body-parser');
 
 require('dotenv/config');
 
@@ -30,6 +31,17 @@ const selectMiddleware = condition => (a, b) => (req, res, next) =>
 
 app.prepare().then(() => {
   const server = express();
+
+  server.use(bodyparser.json())
+  server.use(bodyparser.urlencoded({extended: false}));
+
+  server.get('/_auth/register', (req, res, next) => {
+    if(req.body.secret === process.env.REGISTER_SECRET) {
+      next();
+    } else {
+      next(new Error('Wrong secret, nice try'));
+    }
+  });
 
   server.use('/_api', expressPouch(PouchDB, {logPath: '.data/log.txt'}));
   server.use('/_auth', superlogin.router);

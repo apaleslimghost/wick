@@ -7,6 +7,8 @@ import colour from '../components/colour';
 import {Row, container} from '../components/grid';
 import {grey, blue, teal, green, red} from '@quarterto/colours';
 import styled, {css} from 'styled-components';
+import Router from 'next/router';
+import formJson from '@quarterto/form-json';
 
 const {REGISTER_SECRET: registerSecret} = process.env;
 
@@ -42,7 +44,7 @@ const formElement = css`
 padding: ${formElementPadding}rem;
 border-radius: 0.15rem;
 border: 0 none;
-margin: ${1 - formElementPadding}rem 0 calc(-2px + ${1 - formElementPadding}rem);
+margin: ${1 - formElementPadding}rem 0 ${1 - formElementPadding}rem;
 `;
 
 const Input = styled.input`
@@ -51,6 +53,9 @@ ${formElement}
 width: 100%;
 color: inherit;
 border: 1px solid;
+
+padding-top: calc(1px + ${formElementPadding}rem);
+padding-bottom: calc(-3px + ${formElementPadding}rem);
 
 &:focus {
 	color: ${grey[0]};
@@ -153,7 +158,9 @@ class LoginPage extends Component {
 		confirmPassword: '',
 		name: '',
 		usernameAvailable: null,
+		emailAvailable: null,
 		registering: false, // show login state by default
+		loading: false,
 	};
 
 	static getInitialProps({query}) {
@@ -166,6 +173,7 @@ class LoginPage extends Component {
 	constructor(...args) {
 		super(...args);
 		this.checkUsername = debounce(this.checkUsername, 200).bind(this);
+		this.checkEmail = debounce(this.checkEmail, 200).bind(this);
 		this.submit = this.submit.bind(this);
 		this.fields = new Set();
 	}
@@ -177,6 +185,22 @@ class LoginPage extends Component {
 				field.setState({showValidation: true});
 			}
 		});
+
+		const endpoint = this.state.registering ? '/_auth/register' : '/_auth/login';
+
+		this.setState({loading: true});
+
+		const response = await fetch(endpoint, {
+			method: 'POST',
+			headers: {'content-type': 'application/json'},
+			body: JSON.stringify(formJson(this.form)),
+		});
+
+		this.setState({loading: false});
+
+		if([200, 201].includes(response.status)) {
+			Router.push({pathname: '/'});
+		}
 	}
 
 	async checkUsername(ev) {
@@ -196,9 +220,28 @@ class LoginPage extends Component {
 		});
 	}
 
+	async checkEmail(ev) {
+		const {value: email} = ev.target;
+		let emailAvailable;
+
+		if(email.length < 3) {
+			emailAvailable = null;
+		} else {
+			const response = await fetch(`/_auth/validate-email/${email}`);
+			emailAvailable = (response.status === 200);
+		}
+
+		this.setState({
+			emailAvailable,
+		});
+	}
+
 	render() {
-		return <Form>
-			<Heading level={3}>{this.props.canRegister ? 'Sign in or Register' : 'Sign in'}</Heading>
+		return <Form innerRef={f => this.form = f}>
+			<Heading level={2}>{this.props.canRegister ? 'Sign in or Register' : 'Sign in'}</Heading>
+
+			{this.state.registering &&
+				<input type='hidden' name='secret' value={this.props.secret} />}
 
 			<Row>
 				<Field
@@ -212,10 +255,10 @@ class LoginPage extends Component {
 							: registering
 								? usernameAvailable
 									? valid
-									: invalid(`Username ${v} is already taken`)
+									: invalid(`User already taken`)
 								: !usernameAvailable
 									? valid
-									: invalid(`Username ${v} doesn't exist`)}
+									: invalid(`User doesn't exist`)}
 					form={this} />
 
 					{!this.state.registering &&
@@ -269,12 +312,15 @@ class LoginPage extends Component {
 						ref={f => this.fields.add(f)}
 						label='Email'
 						type='email'
+						onChange={fork(persist, this.checkEmail, linkState(this, 'email'))}
 						placeholder='person@example.com'
 						isValid={v =>
 							!v
 								? invalid('Enter an email')
 								: !!v.match(emailRegex)
-									? valid
+									? this.state.emailAvailable
+										? valid
+										: invalid('Email in use')
 									: invalid(`Enter a valid email`)}
 						form={this} />}
 
@@ -292,7 +338,7 @@ class LoginPage extends Component {
 
 			<Row>
 				<Buttons>
-					<Button primary={!this.state.registering} success={this.state.registering} onClick={this.submit}>
+					<Button primary={!this.state.registering} success={this.state.registering} onClick={this.submit} disabled={this.state.loading}>
 						{this.state.registering ? 'Register' : 'Sign in'}
 					</Button>
 				</Buttons>
