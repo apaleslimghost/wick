@@ -16,7 +16,7 @@ const persist = ev => ev.persist();
 const emailRegex = /^.+@.+$/; // fuck it, that'll do
 
 const Form = styled.form`
-${container('35rem')}
+${container('40rem')}
 `;
 
 const FieldWrapper = styled.div`
@@ -29,9 +29,11 @@ color: ${({valid, invalid}) =>
 `;
 
 const Label = styled.label`
-${sansScale(0)}
+${sansScale(-2)}
 display: block;
 margin-bottom: 0;
+margin-right: 0;
+margin-top: 1rem;
 `;
 
 const formElementPadding = 0.6;
@@ -85,9 +87,12 @@ const Buttons = styled.div`
 margin-top: 1rem;
 `;
 
-const ValidationMessage = styled.span`
-${sansScale(-3)}
-float: right;
+const ValidationMessage = styled.div`
+${sansScale(-3.5)}
+text-align: right;
+margin-bottom: 0;
+margin-left: 0;
+margin-top: 1rem;
 `;
 
 const indeterminate = {is: i => i === 'indeterminate'};
@@ -121,13 +126,12 @@ class Field extends Component {
 		const validationResult = this.getValidationState();
 
 		return <FieldWrapper valid={validationResult.is('valid')} invalid={validationResult.is('invalid')}>
-			<Label htmlFor={this.name}>
-				{label}
+			<Row>
+				<Label htmlFor={this.name}>{label}</Label>
 
 				{validationResult.is('invalid') &&
 					<ValidationMessage>{validationResult.message}</ValidationMessage>}
-			</Label>
-
+			</Row>
 			<Input
 				type={type}
 				placeholder={placeholder}
@@ -213,9 +217,23 @@ class LoginPage extends Component {
 									? valid
 									: invalid(`Username ${v} doesn't exist`)}
 					form={this} />
+
+					{!this.state.registering &&
+						<Field
+							ref={f => this.fields.add(f)}
+							label='Password'
+							type='password'
+							placeholder='Secret'
+							isValid={v =>
+								!v
+									? invalid('Enter a password')
+									: v.length >= 6
+										? valid
+										: invalid('6 or more characters')}
+							form={this} />}
 			</Row>
 
-			<Row>
+			{this.state.registering && <Row>
 				<Field
 					ref={f => this.fields.add(f)}
 					label='Password'
@@ -226,25 +244,24 @@ class LoginPage extends Component {
 							? invalid('Enter a password')
 							: v.length >= 6
 								? valid
-								: invalid('Should be 6 or more characters')}
+								: invalid('6 or more characters')}
 					form={this} />
 
-				{this.state.registering &&
 					<Field
 						ref={f => this.fields.add(f)}
-						label='Confirm password'
+						label='Confirm'
 						name='confirmPassword'
 						type='password'
 						placeholder='Secret'
 						isValid={(value, {password}) =>
 							!value
-								? invalid('Confirm your password')
+								? invalid('Confirm password')
 								: value === password
 									? valid
-									: invalid('Passwords should match')
+									: invalid('Should match')
 						}
-						form={this} />}
-			</Row>
+						form={this} />
+			</Row>}
 
 			<Row>
 				{this.state.registering &&
@@ -258,7 +275,7 @@ class LoginPage extends Component {
 								? invalid('Enter an email')
 								: !!v.match(emailRegex)
 									? valid
-									: invalid(`${v} doesn't look like an email address`)}
+									: invalid(`Enter a valid email`)}
 						form={this} />}
 
 				{this.state.registering &&

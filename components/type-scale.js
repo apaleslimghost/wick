@@ -17,7 +17,7 @@ const props = font => scale => {
 	line-height: ${lineHeight}rem;
 	position: relative;
 	top: ${baselineDistance}rem;
-	margin: 0 0 1rem;
+	margin-bottom: 1rem;
 	`;
 }
 

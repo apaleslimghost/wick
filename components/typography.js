@@ -49,6 +49,7 @@ export const Link = ({href, title, children}) => href[0] === '/' ?
 </WickLink> : <a href={href} title={title}>{children}</a>;
 
 export const Paragraph = styled.p`
+margin: 0;
 ${sansScale(0)}
 overflow: hidden;
 `;
