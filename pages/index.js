@@ -7,6 +7,7 @@ import getPage from '../get-page';
 import Markdown from 'react-markdown';
 import * as typography from '../components/typography';
 import {Content} from './page';
+import {requireAuth} from '../auth';
 
 const HomePage = ({recentlyUpdated = [], homePage = {}}) => <div>
 	<Header>
@@ -23,7 +24,9 @@ const HomePage = ({recentlyUpdated = [], homePage = {}}) => <div>
 	<TeaserGrid title='Recently Updated' items={recentlyUpdated} />
 </div>;
 
-HomePage.getInitialProps = async () => {
+HomePage.getInitialProps = async ({req, res}) => {
+	await requireAuth({req, res});
+
 	const recent$ = pages.find({
 		selector: {$and: [
 			{lastUpdated: {$gt: null}},

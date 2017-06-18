@@ -17,6 +17,7 @@
     "dotenv": "^4.0.0",
     "express": "^4.15.2",
     "express-pouchdb": "^2.3.5",
+    "express-session": "^1.15.3",
     "human-date": "^1.4.0",
     "linkstate": "^1.0.1",
     "lodash.debounce": "^4.0.8",

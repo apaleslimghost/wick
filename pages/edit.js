@@ -14,6 +14,7 @@ import {teal} from '@quarterto/colours';
 import {sansScale, serifScale} from '../components/type-scale';
 import range from 'lodash.range';
 import {Heading, Paragraph} from '../components/typography';
+import {requireAuth} from '../auth';
 
 const Form = styled.form`
 ${maxWidth}
@@ -45,109 +46,152 @@ ${sansScale(0)}
 }
 
 .CodeMirror .CodeMirror-code {
-  ${range(5).map(i => css`
+  ${range(5).map(
+		i => css`
   .cm-header-${i + 1} {
     display: inline-block;
     margin: 0;
     ${serifScale(6 - i)}
-  }`)}
+  }`,
+	)}
 }
 `;
 
 const editorToolbar = [
-  'bold', 'italic', 'strikethrough', '|',
-  'heading', 'heading-smaller', 'heading-bigger', '|',
-  'quote', 'unordered-list', 'ordered-list', '|',
-  'link', 'image', 'horizontal-rule',
+	'bold',
+	'italic',
+	'strikethrough',
+	'|',
+	'heading',
+	'heading-smaller',
+	'heading-bigger',
+	'|',
+	'quote',
+	'unordered-list',
+	'ordered-list',
+	'|',
+	'link',
+	'image',
+	'horizontal-rule',
 ];
 
 export default class EditPage extends Component {
-  constructor(props, ...args) {
-    super(props, ...args);
+	constructor(props, ...args) {
+		super(props, ...args);
 
-    const lastSlugPart = props.slug.split('/').reverse()[0];
-    const fallbackTitle = titleCase(lastSlugPart.replace(/_/g, ' '));
+		const lastSlugPart = props.slug.split('/').reverse()[0];
+		const fallbackTitle = titleCase(lastSlugPart.replace(/_/g, ' '));
 
-    this.state = Object.assign({
-      title: fallbackTitle,
-      content: '',
-      slug: props.slug,
-    }, props.page);
+		this.state = Object.assign(
+			{
+				title: fallbackTitle,
+				content: '',
+				slug: props.slug,
+			},
+			props.page,
+		);
 
-    this.state.slug = this.state.slug.slice(1);
-  }
+		this.state.slug = this.state.slug.slice(1);
+	}
 
-  static getInitialProps({query}) {
-    return getPage(query.slug);
-  }
+	static async getInitialProps({query, req, res}) {
+		await requireAuth({req, res});
 
-  async submit(ev) {
-    ev.preventDefault();
-    if(!this.form) return;
+		return getPage(query.slug);
+	}
 
-    const form = formJson(this.form);
-    const slug = (form.slug || this.props.slug).replace(/ /g, '_').replace(/^\/?/, '/');
-    const page = Object.assign(
-      this.props.page,
-      form,
-      this.state,
-      {lastUpdated: new Date(), slug}
-    );
+	async submit(ev) {
+		ev.preventDefault();
+		if (!this.form) return;
 
-    if(this.props.found) {
-      await pages.put(page);
-    } else {
-      await pages.post(Object.assign(page, {
-        created: new Date(),
-      }));
-    }
+		const form = formJson(this.form);
+		const slug = (form.slug || this.props.slug)
+			.replace(/ /g, '_')
+			.replace(/^\/?/, '/');
+		const page = Object.assign(this.props.page, form, this.state, {
+			lastUpdated: new Date(),
+			slug,
+		});
 
-    if(slug === '/_index') {
-      Router.push({pathname: '/index'}, '/');
-    } else {
-      Router.push({pathname: '/page', query: {slug}}, slug);
-    }
-  }
+		if (this.props.found) {
+			await pages.put(page);
+		} else {
+			await pages.post(
+				Object.assign(page, {
+					created: new Date(),
+				}),
+			);
+		}
 
-  render() {
-    const isNewPage = !this.props.slug || !this.props.found;
-    const isHomePage = this.props.slug === '/_index';
+		if (slug === '/_index') {
+			Router.push('/index', '/');
+		} else {
+			Router.push({pathname: '/page', query: {slug}}, slug);
+		}
+	}
 
-    return <main>
-      <Head>
-        <link href='/static/simplemde.min.css' rel='stylesheet' />
-      </Head>
+	render() {
+		const isNewPage = !this.props.slug || !this.props.found;
+		const isHomePage = this.props.slug === '/_index';
 
-      <Header>
-        <MenuLink right danger preload href={isNewPage || isHomePage
-            ? {pathname: '/index'}
-            : {pathname: '/page', query: {slug: this.props.slug}}
-          } as={isNewPage || isHomePage ? '/' : this.props.slug}>
-          Back
-        </MenuLink>
-        <MenuItem right primary onClick={ev => this.submit(ev)}>
-          Save
-        </MenuItem>
-      </Header>
+		return (
+			<main>
+				<Head>
+					<link href="/static/simplemde.min.css" rel="stylesheet" />
+				</Head>
 
-      <Form innerRef={form => this.form = form}>
-        <Heading anchor={false} level={1}>
-          {isHomePage
-            ? 'Home'
-            : <Input name='title' value={this.state.title} onChange={ev => this.setState({title: ev.target.value})} placeholder='Title' key='fhs' />}
-        </Heading>
+				<Header>
+					<MenuLink
+						right
+						danger
+						preload
+						href={
+							isNewPage || isHomePage
+								? {pathname: '/index'}
+								: {pathname: '/page', query: {slug: this.props.slug}}
+						}
+						as={isNewPage || isHomePage ? '/' : this.props.slug}
+					>
+						Back
+					</MenuLink>
+					<MenuItem right primary onClick={ev => this.submit(ev)}>
+						Save
+					</MenuItem>
+				</Header>
 
-        {!isHomePage && <Paragraph>
-          /
-          <Input name='slug' value={this.state.slug} onChange={ev => this.setState({slug: ev.target.value})} placeholder='Page path' key='ffs' />
-        </Paragraph>}
+				<Form innerRef={form => (this.form = form)}>
+					<Heading anchor={false} level={1}>
+						{isHomePage
+							? 'Home'
+							: <Input
+									name="title"
+									value={this.state.title}
+									onChange={ev =>
+										this.setState({title: ev.target.value})}
+									placeholder="Title"
+									key="fhs"
+								/>}
+					</Heading>
 
-        <Editor
-          value={this.state.content.trim()}
-          onChange={content => this.setState({content})}
-          options={{toolbar: editorToolbar}}
-        />
-      </Form>
-    </main>;
-  }
+					{!isHomePage &&
+						<Paragraph>
+							/
+							<Input
+								name="slug"
+								value={this.state.slug}
+								onChange={ev => this.setState({slug: ev.target.value})}
+								placeholder="Page path"
+								key="ffs"
+							/>
+						</Paragraph>}
+
+					<Editor
+						value={this.state.content.trim()}
+						onChange={content => this.setState({content})}
+						options={{toolbar: editorToolbar}}
+					/>
+				</Form>
+			</main>
+		);
+	}
 }

@@ -10,6 +10,7 @@ import {sansScale} from '../components/type-scale';
 import {maxWidth} from '../components/grid';
 import TeaserGrid from '../components/teaser-grid';
 import RelativeDate from '../components/date';
+import {requireAuth} from '../auth';
 
 export const Content = styled.article`
 ${maxWidth}
@@ -49,7 +50,9 @@ export const PagePage = ({page = {}, slug, subpages, parents}) => <main>
 	{!!subpages.length && <TeaserGrid title='Subpages' items={subpages} />}
 </main>;
 
-PagePage.getInitialProps = async ({query, res}) => {
+PagePage.getInitialProps = async ({query, req, res}) => {
+	await requireAuth({req, res});
+
 	const result = await getPage(query.slug, {subpages: true, parents: true});
 
 	if(result.found) {

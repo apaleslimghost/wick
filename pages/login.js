@@ -23,11 +23,7 @@ ${container('40rem')}
 
 const FieldWrapper = styled.div`
 color: ${({valid, invalid}) =>
-	valid
-		? green[4]
-		: invalid
-			? red[3]
-			: 'inherit'}
+	valid ? green[4] : invalid ? red[3] : 'inherit'}
 `;
 
 const Label = styled.label`
@@ -115,7 +111,10 @@ class Field extends Component {
 
 	getValidationState() {
 		return this.state.showValidation
-			? this.props.isValid(this.props.form.state[this.name], this.props.form.state)
+			? this.props.isValid(
+					this.props.form.state[this.name],
+					this.props.form.state
+				)
 			: indeterminate;
 	}
 
@@ -126,27 +125,34 @@ class Field extends Component {
 			placeholder,
 			type = 'text',
 			onChange = linkState(form, this.name),
-			isValid = () => indeterminate
+			isValid = () => indeterminate,
 		} = this.props;
 		const validationResult = this.getValidationState();
 
-		return <FieldWrapper valid={validationResult.is('valid')} invalid={validationResult.is('invalid')}>
-			<Row>
-				<Label htmlFor={this.name}>{label}</Label>
+		return (
+			<FieldWrapper
+				valid={validationResult.is('valid')}
+				invalid={validationResult.is('invalid')}
+			>
+				<Row>
+					<Label htmlFor={this.name}>{label}</Label>
 
-				{validationResult.is('invalid') &&
-					<ValidationMessage>{validationResult.message}</ValidationMessage>}
-			</Row>
-			<Input
-				type={type}
-				placeholder={placeholder}
-				onChange={onChange}
-				value={form.state[this.name]}
-				name={this.name}
-				id={this.name}
-				onBlur={() => this.setState({showValidation: true})}
-			/>
-		</FieldWrapper>;
+					{validationResult.is('invalid') &&
+						<ValidationMessage>
+							{validationResult.message}
+						</ValidationMessage>}
+				</Row>
+				<Input
+					type={type}
+					placeholder={placeholder}
+					onChange={onChange}
+					value={form.state[this.name]}
+					name={this.name}
+					id={this.name}
+					onBlur={() => this.setState({showValidation: true})}
+				/>
+			</FieldWrapper>
+		);
 	}
 }
 
@@ -166,7 +172,7 @@ class LoginPage extends Component {
 	static getInitialProps({query}) {
 		return {
 			canRegister: query.secret === registerSecret,
-			secret: query.secret
+			secret: query.secret,
 		};
 	}
 
@@ -181,12 +187,15 @@ class LoginPage extends Component {
 	async submit(ev) {
 		ev.preventDefault();
 		this.fields.forEach(field => {
-			if(field) { // matt. matt no
+			if (field) {
+				// matt. matt no
 				field.setState({showValidation: true});
 			}
 		});
 
-		const endpoint = this.state.registering ? '/_auth/register' : '/_auth/login';
+		const endpoint = this.state.registering
+			? '/_auth/register'
+			: '/_auth/login';
 
 		this.setState({loading: true});
 
@@ -198,8 +207,8 @@ class LoginPage extends Component {
 
 		this.setState({loading: false});
 
-		if([200, 201].includes(response.status)) {
-			Router.push({pathname: '/'});
+		if ([200, 201].includes(response.status)) {
+			Router.push('/index', '/');
 		}
 	}
 
@@ -207,11 +216,11 @@ class LoginPage extends Component {
 		const {value: username} = ev.target;
 		let usernameAvailable;
 
-		if(username.length < 3) {
+		if (username.length < 3) {
 			usernameAvailable = null;
 		} else {
 			const response = await fetch(`/_auth/validate-username/${username}`);
-			usernameAvailable = (response.status === 200);
+			usernameAvailable = response.status === 200;
 		}
 
 		this.setState({
@@ -224,11 +233,11 @@ class LoginPage extends Component {
 		const {value: email} = ev.target;
 		let emailAvailable;
 
-		if(email.length < 3) {
+		if (email.length < 3) {
 			emailAvailable = null;
 		} else {
 			const response = await fetch(`/_auth/validate-email/${email}`);
-			emailAvailable = (response.status === 200);
+			emailAvailable = response.status === 200;
 		}
 
 		this.setState({
@@ -237,113 +246,133 @@ class LoginPage extends Component {
 	}
 
 	render() {
-		return <Form innerRef={f => this.form = f}>
-			<Heading level={2}>{this.props.canRegister ? 'Sign in or Register' : 'Sign in'}</Heading>
+		return (
+			<Form innerRef={f => (this.form = f)}>
+				<Heading level={2}>
+					{this.props.canRegister ? 'Sign in or Register' : 'Sign in'}
+				</Heading>
 
-			{this.state.registering &&
-				<input type='hidden' name='secret' value={this.props.secret} />}
+				{this.state.registering &&
+					<input type="hidden" name="secret" value={this.props.secret} />}
 
-			<Row>
-				<Field
-					ref={f => this.fields.add(f)}
-					label='Username'
-					onChange={fork(persist, this.checkUsername, linkState(this, 'username'))}
-					placeholder='person123'
-					isValid={(v, {registering, usernameAvailable}) =>
-						!v
-							? invalid('Enter a username')
-							: registering
-								? usernameAvailable
-									? valid
-									: invalid(`User already taken`)
-								: !usernameAvailable
-									? valid
-									: invalid(`User doesn't exist`)}
-					form={this} />
+				<Row>
+					<Field
+						ref={f => this.fields.add(f)}
+						label="Username"
+						onChange={fork(
+							persist,
+							this.checkUsername,
+							linkState(this, 'username')
+						)}
+						placeholder="person123"
+						isValid={(v, {registering, usernameAvailable}) =>
+							!v
+								? invalid('Enter a username')
+								: registering
+									? usernameAvailable
+										? valid
+										: invalid(`User already taken`)
+									: !usernameAvailable
+										? valid
+										: invalid(`User doesn't exist`)}
+						form={this}
+					/>
 
 					{!this.state.registering &&
 						<Field
 							ref={f => this.fields.add(f)}
-							label='Password'
-							type='password'
-							placeholder='Secret'
+							label="Password"
+							type="password"
+							placeholder="Secret"
 							isValid={v =>
 								!v
 									? invalid('Enter a password')
 									: v.length >= 6
 										? valid
 										: invalid('6 or more characters')}
-							form={this} />}
-			</Row>
+							form={this}
+						/>}
+				</Row>
 
-			{this.state.registering && <Row>
-				<Field
-					ref={f => this.fields.add(f)}
-					label='Password'
-					type='password'
-					placeholder='Secret'
-					isValid={v =>
-						!v
-							? invalid('Enter a password')
-							: v.length >= 6
-								? valid
-								: invalid('6 or more characters')}
-					form={this} />
-
-					<Field
-						ref={f => this.fields.add(f)}
-						label='Confirm'
-						name='confirmPassword'
-						type='password'
-						placeholder='Secret'
-						isValid={(value, {password}) =>
-							!value
-								? invalid('Confirm password')
-								: value === password
-									? valid
-									: invalid('Should match')
-						}
-						form={this} />
-			</Row>}
-
-			<Row>
 				{this.state.registering &&
-					<Field
-						ref={f => this.fields.add(f)}
-						label='Email'
-						type='email'
-						onChange={fork(persist, this.checkEmail, linkState(this, 'email'))}
-						placeholder='person@example.com'
-						isValid={v =>
-							!v
-								? invalid('Enter an email')
-								: !!v.match(emailRegex)
-									? this.state.emailAvailable
+					<Row>
+						<Field
+							ref={f => this.fields.add(f)}
+							label="Password"
+							type="password"
+							placeholder="Secret"
+							isValid={v =>
+								!v
+									? invalid('Enter a password')
+									: v.length >= 6
 										? valid
-										: invalid('Email in use')
-									: invalid(`Enter a valid email`)}
-						form={this} />}
+										: invalid('6 or more characters')}
+							form={this}
+						/>
 
-				{this.state.registering &&
-					<Field
-						ref={f => this.fields.add(f)}
-						label='Name'
-						placeholder='Person Lastname'
-						isValid={v =>
-							!v
-								? invalid('Enter your name')
-								: valid}
-						form={this} />}
-			</Row>
+						<Field
+							ref={f => this.fields.add(f)}
+							label="Confirm"
+							name="confirmPassword"
+							type="password"
+							placeholder="Secret"
+							isValid={(value, {password}) =>
+								!value
+									? invalid('Confirm password')
+									: value === password
+										? valid
+										: invalid('Should match')}
+							form={this}
+						/>
+					</Row>}
 
-			<Row>
-				<Buttons>
-					<Button primary={!this.state.registering} success={this.state.registering} onClick={this.submit} disabled={this.state.loading}>
-						{this.state.registering ? 'Register' : 'Sign in'}
-					</Button>
-				</Buttons>
-			</Row>
-		</Form>;
+				<Row>
+					{this.state.registering &&
+						<Field
+							ref={f => this.fields.add(f)}
+							label="Email"
+							type="email"
+							onChange={fork(
+								persist,
+								this.checkEmail,
+								linkState(this, 'email')
+							)}
+							placeholder="person@example.com"
+							isValid={v =>
+								!v
+									? invalid('Enter an email')
+									: !!v.match(emailRegex)
+										? this.state.emailAvailable
+											? valid
+											: invalid('Email in use')
+										: invalid(`Enter a valid email`)}
+							form={this}
+						/>}
+
+					{this.state.registering &&
+						<Field
+							ref={f => this.fields.add(f)}
+							label="Name"
+							placeholder="Person Lastname"
+							isValid={v => (!v ? invalid('Enter your name') : valid)}
+							form={this}
+						/>}
+				</Row>
+
+				<Row>
+					<Buttons>
+						<Button
+							primary={!this.state.registering}
+							success={this.state.registering}
+							onClick={this.submit}
+							disabled={this.state.loading}
+						>
+							{this.state.registering ? 'Register' : 'Sign in'}
+						</Button>
+					</Buttons>
+				</Row>
+			</Form>
+		);
 	}
 }
 
