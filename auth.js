@@ -11,12 +11,15 @@ if (!process.browser) {
 exports.requireAuth = ({req, res}) =>
 	Promise.resolve().then(() => {
 		if (req && res) {
-			exports.passport.authenticate('bearer', {
-				failureRedirect: '/_user/login',
-			})(req, res);
+			console.log(req.session, req.user);
+			if (!req.user) {
+				res.redirect('/_user/login');
+			}
 			return {};
 		} else {
-			return fetch('/_auth/session').then(({status}) => {
+			return fetch('/_auth/session', {
+				credentials: 'same-origin',
+			}).then(({status}) => {
 				if (status === 401) {
 					Router.push('/login', '/_user/login');
 					return {};
