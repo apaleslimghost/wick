@@ -2,7 +2,7 @@ const {createServer} = require('http');
 const {parse} = require('url');
 const next = require('next');
 const express = require('express');
-const {PouchDB} = require('./db');
+const {PouchDB, users} = require('./db');
 const expressPouch = require('express-pouchdb');
 const url = require('url');
 const bodyparser = require('body-parser');
@@ -13,7 +13,7 @@ require('dotenv/config');
 
 const unpromise = fn => (...args) => {
 	const cb = args.pop();
-	fn(...args).then(v => cb(null, v), e => cb(e));
+	Promise.resolve().then(() => fn(...args)).then(v => cb(null, v), e => cb(e));
 };
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -31,27 +31,80 @@ const redirectToUnderscores = (req, res, next) => {
 const selectMiddleware = condition => (a, b) => (req, res, next) =>
 	(condition(req, res) ? a : b)(req, res, next);
 
+const improvedLogin = [
+	(req, res, next) => {
+		passport.authenticate('local', (err, user, info) => {
+			if (err) {
+				return next(err);
+			}
+
+			if (!user) {
+				// Authentication failed
+				return res.status(401).json(info);
+			}
+
+			// Success
+			req.logIn(user, {}, err => {
+				if (err) {
+					return next(err);
+				}
+
+				return next();
+			});
+		})(req, res, next);
+	},
+	(req, res, next) => {
+		// Success handler
+		return superlogin.createSession(req.user._id, 'local', req).then(
+			mySession => {
+				req.session.session = mySession; // yo dawg i heard you like sessions
+				console.log(req.path, req.sessionID);
+				res.status(200).json(mySession);
+			},
+			err => {
+				return next(err);
+			}
+		);
+	},
+];
+
 app.prepare().then(() => {
 	const server = express();
 
 	server.use(bodyparser.json());
 	server.use(
 		session({
-			resave: false,
+			rolling: false,
+			resave: true,
 			saveUninitialized: false,
 			secret: 'keyboard cat',
+			cookie: {
+				maxAge: 3600000,
+				httpOnly: false,
+			},
 		})
 	);
 	server.use(passport.initialize());
 	server.use(passport.session());
 
-	server.get('/_auth/register', (req, res, next) => {
+	server.use((req, res, next) => {
+		console.log(req.path, req.sessionID);
+		console.log(req.session);
+		next();
+	});
+
+	passport.deserializeUser(unpromise(id => users.get(id)));
+	passport.serializeUser(unpromise(user => user._id));
+
+	server.post('/_auth/register', (req, res, next) => {
 		if (req.body.secret === process.env.REGISTER_SECRET) {
 			next();
 		} else {
 			next(new Error('Wrong secret, nice try'));
 		}
 	});
+
+	server.post('/_auth/login', improvedLogin);
 
 	server.use('/_api', expressPouch(PouchDB, {logPath: '.data/log.txt'}));
 	server.use('/_auth', superlogin.router);

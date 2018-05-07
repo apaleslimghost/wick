@@ -82,6 +82,10 @@ ${({success}) => success && colour('green', 4)}
 &:active {
 	filter: brightness(0.9);
 }
+
+&:disabled {
+	${colour('grey')}
+}
 `;
 
 const Buttons = styled.div`
@@ -169,10 +173,10 @@ class LoginPage extends Component {
 		loading: false,
 	};
 
-	static getInitialProps({query}) {
+	static getInitialProps({query: {secret = false}}) {
 		return {
-			canRegister: query.secret === registerSecret,
-			secret: query.secret,
+			canRegister: secret === registerSecret,
+			secret,
 		};
 	}
 
@@ -205,11 +209,13 @@ class LoginPage extends Component {
 			body: JSON.stringify(formJson(this.form)),
 		});
 
-		this.setState({loading: false});
+		const data = await response.json();
 
 		if ([200, 201].includes(response.status)) {
-			Router.push('/index', '/');
+			await Router.push('/index', '/');
 		}
+
+		this.setState({loading: false});
 	}
 
 	async checkUsername(ev) {
